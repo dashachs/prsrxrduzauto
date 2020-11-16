@@ -1,0 +1,4 @@
+Парсер харид.узавтомоторс
+
+https://xarid.uzautomotors.com/public/order
+https://xarid.uzautomotors.com/public/auction (возможно)
