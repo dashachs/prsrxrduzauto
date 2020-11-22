@@ -58,8 +58,8 @@ def parseTendersFromPage(browser, listOfTenders, link):
         listOfTenders[size].lotID = int(listForLotIDs[i])
         listOfTenders[size].link = (link + "/") + listForLotIDs[i]
         listOfTenders[size].purchaseName = listForPurchaseNames[i]
-        listOfTenders[size].startDate = listForStartDates[i]
-        listOfTenders[size].endDate = listForEndDates[i]
+        listOfTenders[size].startDate = listForStartDates[i][0:10]
+        listOfTenders[size].endDate = listForEndDates[i][0:10]
         listOfTenders[size].category = listForCategories[i]
         listOfTenders[size].customerName = listForCustomerNames[i]
         listOfTenders[size].customerCompanyName = listForCustomerCompanyNames[i]
