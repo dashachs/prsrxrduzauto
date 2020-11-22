@@ -12,8 +12,8 @@ class lot:
         self.category = category  # - Категория
         self.categoryID = categoryID  # - ID категории
         self.linkToLot = linkToLot  # - ссылка https://xarid.uzautomotors.com/public/order/ + номер
-        self.startedAt = startDate  # - Дата подачи
-        self.endedAt = endDate  # - Срок
+        self.startDate = startDate  # - Дата подачи
+        self.endedDate = endDate  # - Срок
         self.status = status  # status — (relevant/expired)
         self.purchaseName = purchaseName  # - Наименование конкурса
         self.customerName = customerName  # -Наименование заказчика +
