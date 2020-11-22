@@ -1,4 +1,4 @@
-from selenium.common.exceptions import StaleElementReferenceException, WebDriverException
+from selenium.common.exceptions import StaleElementReferenceException, WebDriverException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
@@ -6,7 +6,7 @@ from selenium.common.exceptions import TimeoutException
 import object_of_lot
 
 
-def openAndParsePage(browser, link, listOfLots):
+def openAndParsePage(browser, link, listOfTenders):
     browser.get(link)
     # getting number of pages
     numberOfTenders = int(browser.find_element_by_xpath("//div[@class='filter__option filter--text pull-left']/div[1]/select/option").text.replace(' ','').replace('Активныеконкурсы:', ''))
@@ -15,14 +15,22 @@ def openAndParsePage(browser, link, listOfLots):
         numberOfPages += 1
     # parsing from each page
     for i in range(numberOfPages):
-        parseTendersFromPage(browser, listOfLots)
+        parseTendersFromPage(browser, listOfTenders, link)
         if i + 1 != numberOfPages:
-            link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a").get_attribute('href')
-            print(link)
-            browser.get(link)
+            try:
+                link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
+                print(link)
+                browser.get(link)
+            except NoSuchElementException:
+                print("\n===  NoSuchElementException  ===")
+            finally:
+                continue
+    for tender in listOfTenders:
+        parseTenderLot(browser, tender)
+    printLots(listOfTenders)
 
 
-def parseTendersFromPage(browser, listOfLots):
+def parseTendersFromPage(browser, listOfTenders, link):
     # getting info from table
     listForLotIDs = browser.find_elements_by_xpath("//div[@class='table-responsive']/table/tbody/tr/td[1]/a")
     listForStartDates = browser.find_elements_by_xpath("//div[@class='table-responsive']/table/tbody/tr/td[2]")
@@ -45,30 +53,17 @@ def parseTendersFromPage(browser, listOfLots):
 
     # putting info in list
     for i in range(len(listForLotIDs)):
-        size = len(listOfLots)
-        print("#", size)
-        listOfLots.append(object_of_lot.lot())
-        listOfLots[size].lotID = listForLotIDs[i]
-        listOfLots[size].purchaseName = listForPurchaseNames[i]
-        listOfLots[size].startDate = listForStartDates[i]
-        listOfLots[size].endDate = listForEndDates[i]
-        listOfLots[size].category = listForCategories[i]
-        listOfLots[size].customerName = listForCustomerNames[i]
-        listOfLots[size].customerCompanyName = listForCustomerCompanyNames[i]
-
-    printLots(listOfLots)
-
-    # # parse lots
-    # for i in range(len(lotNames)):
-    #     size = len(listOfLots)
-    #     link = "http://etender.uzex.uz/lot/" + lotIDs[i]
-    #
-    #     # adding new lot to list of lots (adding ID and purchase name)
-    #     listOfLots.append(object_of_lot.lot())
-    #     listOfLots[size].lotID = lotIDs[i]
-    #     listOfLots[size].purchaseName = lotNames[i]
-    #     listOfLots[size].customerAddress = lotAddresses[i]
-    #     parseLot(browser, link, listOfLots[size])
+        size = len(listOfTenders)
+        listOfTenders.append(object_of_lot.lot())
+        listOfTenders[size].lotID = int(listForLotIDs[i])
+        listOfTenders[size].link = (link + "/") + listForLotIDs[i]
+        listOfTenders[size].purchaseName = listForPurchaseNames[i]
+        listOfTenders[size].startDate = listForStartDates[i]
+        listOfTenders[size].endDate = listForEndDates[i]
+        listOfTenders[size].category = listForCategories[i]
+        listOfTenders[size].customerName = listForCustomerNames[i]
+        listOfTenders[size].customerCompanyName = listForCustomerCompanyNames[i]
+        # parse current
 
     # clear lists
     listForLotIDs.clear()
@@ -80,68 +75,36 @@ def parseTendersFromPage(browser, listOfLots):
     listForCustomerCompanyNames.clear()
 
 
-# def parseFromPage(browser, listOfLots):
-#     # search lot's ID and purchase names
-#     lotIDs = []
-#     lotNames = []
-#     lotAddresses = []
-#     listForIDs = browser.find_elements_by_xpath("//div[@class ='lot-item__num-cat']/div/span")
-#     listForNames = browser.find_elements_by_xpath("//div[@class='lot-item__title']")
-#     listOfAddresses = browser.find_elements_by_xpath("//div[@class='lot-item__address']")
-#     for i, j, k in zip(listForIDs, listForNames, listOfAddresses):
-#         lotIDs.append(i.text)
-#         lotNames.append(j.text)
-#         lotAddresses.append(k.text)
-#
-#     # clear lists
-#     listForIDs.clear()
-#     listForNames.clear()
-#     listOfAddresses.clear()
-#
-#     # parse lots
-#     for i in range(len(lotNames)):
-#         size = len(listOfLots)
-#         link = "http://etender.uzex.uz/lot/" + lotIDs[i]
-#
-#         # adding new lot to list of lots (adding ID and purchase name)
-#         listOfLots.append(object_of_lot.lot())
-#         listOfLots[size].lotID = lotIDs[i]
-#         listOfLots[size].purchaseName = lotNames[i]
-#         listOfLots[size].customerAddress = lotAddresses[i]
-#         parseLot(browser, link, listOfLots[size])
-#
-#     # clear lists
-#     lotIDs.clear()
-#     lotNames.clear()
-#     lotAddresses.clear()
+def parseTenderLot(browser, currentTender):
+    browser.get(currentTender.link)
+    try:
+        currentTender.customerAddressArea = browser.find_element_by_xpath("//ul[@class='infos']/li[2]/p[@class='info']").text
+    except NoSuchElementException:
+        currentTender.customerAddressArea = "-"
+    currentTender.deliveryTerm = "Add"
+    currentTender.paymentTerm = "Add"
+    currentTender.customerPhone = "Add"
+    currentTender.customerEmail = "Add"
+    currentTender.description = "Add"
+    content = browser.page_source
+    if "Вложение" in content:
+        currentTender.attachedFile = currentTender.link + "/download"
+    else:
+        currentTender.attachedFile = "-"
 
 
-def printLots(listOfLots):
-    for lot in listOfLots:
-        print("  lotID", lot.lotID,
-              "\n  purchaseName\n   ", lot.purchaseName,
-              "\n  startDate\n   ", lot.startDate,
-              "\n  endDate\n   ", lot.endDate,
-              "\n  category\n   ", lot.category,
-              "\n  customerName\n   ", lot.customerName,
-              "\n  customerCompanyName\n   ", lot.customerCompanyName,
+def printLots(listOfTenders):
+    tempCountForPrint = 1
+    for tender in listOfTenders:
+        print("#", tempCountForPrint,
+              "\n  lotID", tender.lotID,
+              "\n  purchaseName\n   ", tender.purchaseName,
+              "\n  startDate\n   ", tender.startDate,
+              "\n  endDate\n   ", tender.endDate,
+              "\n  category\n   ", tender.category,
+              "\n  customerName\n   ", tender.customerName,
+              "\n  customerCompanyName\n   ", tender.customerCompanyName,
+              "\n  customerAddressArea\n   ", tender.customerAddressArea,
+              "\n  attachedFile\n   ", tender.attachedFile,
               "\n ============================\n")
-
-
-# def parseLot(browser, link, currentLot):
-#     browser.get(link)
-#     # waiting for page to load
-#
-#
-#
-# def fillInLot(browser, link, currentLot):
-#
-#
-# def reformatDate(date):
-#     dateAndTime = date.split(' ')
-#     dayMonthYear = dateAndTime[0].split('-')
-#     date = (((((dayMonthYear[2] + '-') + dayMonthYear[1]) + '-') + dayMonthYear[0]) + ' ') + dateAndTime[1]
-#     dateAndTime.clear()
-#     dayMonthYear.clear()
-#     return date
-
+        tempCountForPrint += 1
