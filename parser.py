@@ -18,7 +18,7 @@ def executeParserOrders():
     listOfLots = []
 
     # start chrome browser
-    browser = webdriver.Chrome('..\\chromedriver.exe', options=options)
+    browser = webdriver.Chrome('chromedriver.exe', options=options)
 
     # open tenders page and parse tenders
     link = 'https://xarid.uzautomotors.com/public/order'
@@ -40,20 +40,20 @@ def executeParserOrders():
     browser.quit()
 
     # # database input
-    # while True:
-    #     try:
-    #         con = psycopg2.connect(
-    #             database="postgres",
-    #             user="anwar",
-    #             password="etender.uz",
-    #             host="database-rds.cbs8omqsohea.eu-west-3.rds.amazonaws.com",
-    #             port="5432"
-    #         )
-    #     except OperationalError:
-    #         print("Failed to connect to the server. connection...")
-    #     else:
-    #         print("Database was opened successfully")
-    #         break
+    while True:
+        try:
+            con = psycopg2.connect(
+                database="postgres",
+                user="anwar",
+                password="etender.uz",
+                host="database-rds.cbs8omqsohea.eu-west-3.rds.amazonaws.com",
+                port="5432"
+            )
+        except OperationalError:
+            print("Failed to connect to the server. connection...")
+        else:
+            print("Database was opened successfully")
+            break
     #
     # dbUser.getForEverything(con, listOfLots)
     #
