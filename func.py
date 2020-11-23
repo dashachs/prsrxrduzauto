@@ -85,7 +85,6 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
 
 
 def parseTenderLot(browser, currentTender):
-    print("#", currentTender.lotID)
     browser.get(currentTender.link)
     try:
         currentTender.customerAddressArea = browser.find_element_by_xpath("//ul[@class='infos']/li[2]/p[@class='info']").text
@@ -97,7 +96,6 @@ def parseTenderLot(browser, currentTender):
             "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/span[text()='II. Условия поставки']/following::p[1]").text
     except NoSuchElementException:
         currentTender.deliveryTerm = "-"
-        print("-deliveryTerm")
 
     currentTender.paymentTerm = "Add"
 
@@ -123,7 +121,6 @@ def parseTenderLot(browser, currentTender):
             "//*[@id='product-details']/div[@class='tab-content-wrapper']/p").text
     except NoSuchElementException:
         currentTender.specialConditions = "-"
-        print("-specialConditions")
 
     currentTender.type = "Конкурс"
 
