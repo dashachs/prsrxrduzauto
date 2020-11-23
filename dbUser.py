@@ -1,22 +1,26 @@
-# def inputToDB(con, lot):
-#     cur = con.cursor()
-#     cur.execute(
-#         "INSERT INTO etender_uzex_test(lot_number, type, category_id, source_url, started_at, ended_at, status, country_id, region_id, area_id, price, currency_id, purchase_name, customer_name, customer_details, customer_contact, delivery_address, delivery_term, deposit, deposit_payment, advance_payment, payment_method, payment_period, special_conditions, attached_file, description)VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-#         (lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startedAt, lot.endedAt, lot.status,
-#          lot.customerAddressCountryID, lot.customerAddressRegionID, lot.customerAddressAreaID,
-#          lot.startingPrice, lot.currencyID, lot.purchaseName, lot.customerName, lot.customerDetails,
-#          lot.customerContact, lot.deliveryAddress, lot.deliveryTerm, lot.deposit, lot.depositPayment,
-#          lot.advancePayment, lot.paymentMethod, lot.paymentPeriod, lot.specialConditions, lot.attachedFile,
-#          lot.description))
-#     print("  {} was inserted successfully".format(lot.lotID))
-#     con.commit()
+def inputToDB(con, lot):
+    cur = con.cursor()
+    cur.execute(
+        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, "
+        "status, country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, description, "
+        "payment_term, customer_company_name, customer_phone, customer_email, special_conditions) "
+        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startDate, lot.endDate, lot.status,
+         lot.customerAddressCountryID, lot.customerAddressAreaID,
+         lot.purchaseName, lot.customerName, lot.deliveryTerm,
+         lot.attachedFile, lot.description, lot.paymentTerm,
+         lot.customerCompanyName, lot.customerPhone, lot.customerEmail,
+         lot.specialConditions))
+    print("{} was inserted successfully".format(lot.lotID))
+    con.commit()
 
-# def findExpiredLots(con):
-#     cur = con.cursor()
-#     # setting timezone for current session to avoid mistakes
-#     cur.execute("SET TIMEZONE=5")
-#     cur.execute("UPDATE etender_uzex_test SET status = 'expired' WHERE ended_at < now()")
-#     con.commit()
+
+def findExpiredLots(con):
+    cur = con.cursor()
+    # setting timezone for current session to avoid mistakes
+    cur.execute("SET TIMEZONE=5")
+    cur.execute("UPDATE xarid_uzauto_test SET status = 'expired' WHERE ended_at < now()")
+    con.commit()
 
 
 def getForEverything(con, listOfLots):  # название временное
