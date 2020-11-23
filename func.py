@@ -19,7 +19,7 @@ def openAndParsePage(browser, link, listOfTenders):
         if i + 1 != numberOfPages:
             try:
                 link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
-                print(link)
+                # print(link)
                 browser.get(link)
             except NoSuchElementException:
                 print("\n===  NoSuchElementException  ===")
@@ -83,8 +83,23 @@ def parseTenderLot(browser, currentTender):
         currentTender.customerAddressArea = "-"
     currentTender.deliveryTerm = "Add"
     currentTender.paymentTerm = "Add"
-    currentTender.customerPhone = "Add"
-    currentTender.customerEmail = "Add"
+
+    try:
+        tempForProne = browser.find_element_by_xpath(
+        "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/p[contains(text(),'Тел')]").text.split(":")
+        currentTender.customerPhone = tempForProne[-1].replace(' ', '')
+        tempForProne.clear()
+    except NoSuchElementException:
+        currentTender.customerPhone = '-'
+    try:
+        tempForEmail = browser.find_element_by_xpath(
+            "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/p[contains(text(),'mail')]").text.split(":")
+        currentTender.customerEmail = tempForEmail[-1].replace(' ', '')
+        tempForEmail.clear()
+    except NoSuchElementException:
+        currentTender.customerPhone = '-'
+        currentTender.customerEmail = '-'
+
     currentTender.description = "Add"
     content = browser.page_source
     if "Вложение" in content:
@@ -105,6 +120,8 @@ def printLots(listOfTenders):
               "\n  customerName\n   ", tender.customerName,
               "\n  customerCompanyName\n   ", tender.customerCompanyName,
               "\n  customerAddressArea\n   ", tender.customerAddressArea,
+              "\n  customerPhone\n   ", tender.customerPhone,
+              "\n  customerEmail\n   ", tender.customerEmail,
               "\n  attachedFile\n   ", tender.attachedFile,
               "\n ============================\n")
         tempCountForPrint += 1
