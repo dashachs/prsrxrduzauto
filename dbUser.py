@@ -48,7 +48,7 @@ def getCategoryId(con, required):
     rows = cur.fetchall()
     for row in rows:
         if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
-            # print("getCategoryId done successfully")
+            print("getCategoryId done successfully")
             return row[0]
     print("  Category was not found:", required)
     # cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
@@ -62,7 +62,7 @@ def getCategoryId(con, required):
     #              required,
     #              'uzb'))
     # con.commit()
-    print("Category was added to Database successfully")
+    # print("Category was added to Database successfully")
     rows.clear()
     return -1
     # return rows[-1][1] + 1
@@ -127,9 +127,9 @@ def getAreaId(con, required):
     scrap = scrap.replace('p', 'р')
     for row in rows:
         if scrap in row[2].lower().replace(' ', ''):
-            # print("getAreaId done successfully")
+            print("getAreaId done successfully")
             return row[1]
-    print("  Area was not found:", required)
+    print("Area was not found:", required)
     # cur.execute("INSERT INTO geo_areas_translations(id, area_id, name, locale) VALUES (%s, %s, %s, %s)",
     #             (rows[-1][0] + 1,
     #              rows[-1][1] + 1,
@@ -141,7 +141,7 @@ def getAreaId(con, required):
     #              required,
     #              'uzb'))
     # con.commit()
-    print("  Area  was added to Database successfully")
+    # print("Area was added to Database successfully")
     rows.clear()
     return -1
     # return rows[-1][1] + 1
