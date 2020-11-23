@@ -33,85 +33,64 @@ def getForThisLot(con, currentLot):
     currentLot.customerAddressAreaID = getAreaId(con, currentLot.customerAddressArea)
 
 
-# def printLotIDs(currentLot):  # temp
-#     print("Lot №  ", currentLot.lotID,
-#           "\n  categoryID:  ", currentLot.categoryID,
-#           "\n  customerAddressRegionID:  ", currentLot.customerAddressRegionID,
-#           "\n  customerAddressAreaID:  ", currentLot.customerAddressAreaID,
-#           "\n  currencyID:  ", currentLot.currencyID,
-#           "\n======================================\n")
+def transliterate(name):
+    # Слоаврь с заменами
+    dictionary = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+                  'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'i', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+                  'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h',
+                  'ц': 'c', 'ч': 'cz', 'ш': 'sh', 'щ': 'scz', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e',
+                  'ю': 'u', 'я': 'ja', ' ': '-'}
+    # Циклически заменяем все буквы в строке
+    for key in dictionary:
+        name = name.lower().replace(key, dictionary[key])
+    return name
+
+
+def insertInToBiddingCategories(con, name):
+    cur = con.cursor()
+    cur.execute("SELECT id, slug FROM bidding_categories")
+    rows = cur.fetchall()
+    for row in rows:
+        if row[1] == transliterate(name):
+            return row[0]
+    cur.execute(
+        "INSERT INTO bidding_categories(id, parent_id, depth, path, slug, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, now(), now())",
+        (rows[-1][0] + 1,
+         41,
+         2,
+         '/41/{}/'.format(rows[-1][0] + 1),
+         transliterate(name)))
+    con.commit()
+    return rows[-1][0] + 1
 
 
 def getCategoryId(con, required):
+    if required.lower().replace(' ', '') == '':
+        required = 'undefined'
     cur = con.cursor()
-    cur.execute("SELECT category_id, name FROM bidding_categories_translations")
+    cur.execute("SELECT category_id, name, id FROM bidding_categories_translations")
     rows = cur.fetchall()
     for row in rows:
         if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
             print("getCategoryId done successfully")
             return row[0]
-    print("  Category was not found:", required)
-    # cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
-    #             (rows[-1][0] + 1,
-    #              rows[-1][1] + 1,
-    #              required,
-    #              'rus'))
-    # cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
-    #             (rows[-1][0] + 2,
-    #              rows[-1][1] + 1,
-    #              required,
-    #              'uzb'))
-    # con.commit()
+    print("Category was not found:", required)
+    categoryId = insertInToBiddingCategories(con, required)
+    cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
+                (rows[-1][2] + 1,
+                 categoryId,
+                 required,
+                 'rus'))
+    cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
+                (rows[-1][2] + 2,
+                 categoryId,
+                 required,
+                 'uzb'))
+    con.commit()
     # print("Category was added to Database successfully")
     rows.clear()
-    return -1
-    # return rows[-1][1] + 1
-
-# def getCurrencyId(con, required):
-#     cur = con.cursor()
-#     cur.execute("SELECT id, slug FROM finance_currencies")
-#     rows = cur.fetchall()
-#     for row in rows:
-#         if row[1].upper().replace(' ', '') == required.upper().replace(' ', ''):
-#             # print("getCurrencyId done successfully", required, "ID =", row[0])
-#             return row[0]
-#     print("  Currency was not found:", required)
-    # cur.execute("SET TIMEZONE=5")
-    # cur.execute("INSERT INTO finance_currencies(id, slug, created_at, updated_at) VALUES (%s, %s, now(), now())",
-    #             (rows[-1][0] + 1,
-    #              required))
-    # con.commit()
-    # print("  Currency was added to Database successfully")
-    # # print("Please, add description manually")
-    # rows.clear()
     # return -1
-    # return rows[-1][0] + 1
-
-
-# def getRegionId(con, required):
-#     cur = con.cursor()
-#     cur.execute("SELECT region_id, name FROM geo_regions_translations")
-#     rows = cur.fetchall()
-#     for row in rows:
-#         if row[1].lower().replace(' ', '') == required.replace('город', '').lower().replace(' ', ''):
-#             # print("getRegionId done successfully")
-#             return row[0]
-#     print("  Region was not found:", required)
-    # cur.execute("INSERT INTO geo_regions_translations(id, region_id, name, locale) VALUES (%s, %s, %s, %s)",
-    #             (rows[-1][0] + 1,
-    #              rows[-1][1] + 1,
-    #              required,
-    #              'rus'))
-    # cur.execute("INSERT INTO geo_regions_translations(id, region_id, name, locale) VALUES (%s, %s, %s, %s)",
-    #             (rows[-1][0] + 2,
-    #              rows[-1][1] + 1,
-    #              required,
-    #              'uzb'))
-    # con.commit()
-    # print("  Region  was added to Database successfully")
-    # rows.clear()
-    # return -1
-    # return rows[-1][1] + 1
+    return categoryId
 
 
 def getAreaId(con, required):
@@ -145,6 +124,7 @@ def getAreaId(con, required):
     rows.clear()
     return -1
     # return rows[-1][1] + 1
+
 
 def inTable(con, lotNumber):
     cur = con.cursor()
