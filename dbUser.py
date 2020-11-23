@@ -11,14 +11,6 @@
 #     print("  {} was inserted successfully".format(lot.lotID))
 #     con.commit()
 
-
-# def deleteExpiredLots(con):
-#     cur = con.cursor()
-#     cur.execute("SET TIMEZONE=5")
-#     cur.execute("DELETE FROM etender_uzex_test WHERE ended_at < now()")
-#     con.commit()
-#     print("Expired lots were deleted")
-
 # def findExpiredLots(con):
 #     cur = con.cursor()
 #     # setting timezone for current session to avoid mistakes
@@ -27,37 +19,18 @@
 #     con.commit()
 
 
-# def deleteRow(id, con):
-#     cur = con.cursor()
-#     cur.execute("DELETE FROM etender_uzex_test WHERE lot_number={}".format(id))
-#     print("Deletion successful")
-#     con.commit()
-#     con.close()
-#
-#
-# def amountOfRow(con):
-#     cur = con.cursor()
-#     cur.execute("SELECT count(lot_number) FROM etender_uzex_test")
-#     res = cur.fetchall()
-#     con.commit()
-#     con.close()
-#     return res[0][0]
+def getForEverything(con, listOfLots):  # название временное
+    print("Processing data...")
+    for lot in listOfLots:
+        getForThisLot(con, lot)
+        # printLotIDs(lot)
+    print("Data was processed successfully\n"
+          "Adding to Database...")
 
 
-# def getForEverything(con, listOfLots):  # название временное
-#     print("Processing data...")
-#     for lot in listOfLots:
-#         getForThisLot(con, lot)
-#         # printLotIDs(lot)
-#     print("Data was processed successfully\n"
-#           "Adding to Database...")
-
-
-# def getForThisLot(con, currentLot):
-#     currentLot.categoryID = getCategoryId(con, currentLot.category)
-#     currentLot.customerAddressRegionID = getRegionId(con, currentLot.customerAddressRegion)
-#     currentLot.customerAddressAreaID = getAreaId(con, currentLot.customerAddressArea)
-#     currentLot.currencyID = getCurrencyId(con, currentLot.currency)
+def getForThisLot(con, currentLot):
+    currentLot.categoryID = getCategoryId(con, currentLot.category)
+    currentLot.customerAddressAreaID = getAreaId(con, currentLot.customerAddressArea)
 
 
 # def printLotIDs(currentLot):  # temp
@@ -69,15 +42,15 @@
 #           "\n======================================\n")
 
 
-# def getCategoryId(con, required):
-#     cur = con.cursor()
-#     cur.execute("SELECT category_id, name FROM bidding_categories_translations")
-#     rows = cur.fetchall()
-#     for row in rows:
-#         if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
-#             # print("getCategoryId done successfully")
-#             return row[0]
-#     print("  Category was not found:", required)
+def getCategoryId(con, required):
+    cur = con.cursor()
+    cur.execute("SELECT category_id, name FROM bidding_categories_translations")
+    rows = cur.fetchall()
+    for row in rows:
+        if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
+            # print("getCategoryId done successfully")
+            return row[0]
+    print("  Category was not found:", required)
     # cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
     #             (rows[-1][0] + 1,
     #              rows[-1][1] + 1,
@@ -89,9 +62,9 @@
     #              required,
     #              'uzb'))
     # con.commit()
-    # print("  Category was added to Database successfully")
-    # rows.clear()
-    # return -1
+    print("Category was added to Database successfully")
+    rows.clear()
+    return -1
     # return rows[-1][1] + 1
 
 # def getCurrencyId(con, required):
@@ -141,22 +114,22 @@
     # return rows[-1][1] + 1
 
 
-# def getAreaId(con, required):
-#     cur = con.cursor()
-#     cur.execute("SELECT id, area_id, name FROM geo_areas_translations")
-#     rows = cur.fetchall()
-#     scrap = required
-#     scrap = scrap.lower()
-#     scrap = scrap.replace(' ', '')
-#     scrap = scrap.replace('район', '')
-#     scrap = scrap.replace('р-он', '')
-#     scrap = scrap.replace('г.', '')
-#     scrap = scrap.replace('p', 'р')
-#     for row in rows:
-#         if scrap in row[2].lower().replace(' ', ''):
+def getAreaId(con, required):
+    cur = con.cursor()
+    cur.execute("SELECT id, area_id, name FROM geo_areas_translations")
+    rows = cur.fetchall()
+    scrap = required
+    scrap = scrap.lower()
+    scrap = scrap.replace(' ', '')
+    scrap = scrap.replace('район', '')
+    scrap = scrap.replace('р-он', '')
+    scrap = scrap.replace('г.', '')
+    scrap = scrap.replace('p', 'р')
+    for row in rows:
+        if scrap in row[2].lower().replace(' ', ''):
             # print("getAreaId done successfully")
-            # return row[1]
-    # print("  Area was not found:", required)
+            return row[1]
+    print("  Area was not found:", required)
     # cur.execute("INSERT INTO geo_areas_translations(id, area_id, name, locale) VALUES (%s, %s, %s, %s)",
     #             (rows[-1][0] + 1,
     #              rows[-1][1] + 1,
@@ -168,16 +141,16 @@
     #              required,
     #              'uzb'))
     # con.commit()
-    # print("  Area  was added to Database successfully")
-    # rows.clear()
-    # return -1
+    print("  Area  was added to Database successfully")
+    rows.clear()
+    return -1
     # return rows[-1][1] + 1
 
-# def inTable(con, lotNumber):
-#     cur = con.cursor()
-#     cur.execute("SELECT lot_number FROM etender_uzex_test")
-#     rows = cur.fetchall()
-#     for row in rows:
-#         if int(lotNumber) == row[0]:
-#             return True
-#     return False
+def inTable(con, lotNumber):
+    cur = con.cursor()
+    cur.execute("SELECT lot_number FROM etender_uzex_test")
+    rows = cur.fetchall()
+    for row in rows:
+        if int(lotNumber) == row[0]:
+            return True
+    return False

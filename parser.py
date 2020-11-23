@@ -4,6 +4,7 @@ from psycopg2 import OperationalError
 import psycopg2
 import time
 
+import dbUser
 import func
 
 
@@ -55,7 +56,7 @@ def executeParserOrders():
             print("Database was opened successfully")
             break
     #
-    # dbUser.getForEverything(con, listOfLots)
+    dbUser.getForEverything(con, listOfLots)
     #
     # # adding to DB
     # for lot in listOfLots:
