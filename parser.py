@@ -55,21 +55,21 @@ def executeParserOrders():
         else:
             print("Database was opened successfully")
             break
-    #
+
     dbUser.getForEverything(con, listOfLots)
-    #
-    # # adding to DB
+
+    # adding to DB
     # for lot in listOfLots:
     #     if not dbUser.inTable(con, lot.lotID):
     #         dbUser.inputToDB(con, lot)
-    #
-    # # find expired lots
-    # dbUser.findExpiredLots(con)
-    #
-    # print("Database is up-to-date")
-    #
-    # # close DB
-    # con.close()
+
+    # find expired lots
+    dbUser.findExpiredLots(con)
+
+    print("Database is up-to-date")
+
+    # close DB
+    con.close()
 
     # clear list of lots
     listOfLots.clear()
