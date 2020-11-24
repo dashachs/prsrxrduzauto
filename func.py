@@ -35,7 +35,7 @@ def openAndParsePage(browser, link, listOfTenders):
                 continue
     for tender in listOfTenders:
         parseTenderLot(browser, tender)
-    printLots(listOfTenders)
+    # printLots(listOfTenders)
 
 
 def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
@@ -51,21 +51,19 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
     for i in range(len(listForCustomerCompanyNames)):
         listForLotIDs[i] = listForLotIDs[i].text
         if listForCustomerNames[i] == "":
-            listForCustomerNames[i] = '-'
+            listForCustomerNames[i] = None
         listForStartDates[i] = listForStartDates[i].text
         listForEndDates[i] = listForEndDates[i].text
         listForPurchaseNames[i] = listForPurchaseNames[i].text
         if listForPurchaseNames[i] == "":
-            listForPurchaseNames[i] = '-'
+            listForPurchaseNames[i] = None
         listForCategories[i] = listForCategories[i].text
-        if listForCategories[i] == "":
-            listForCategories[i] = '-'
         listForCustomerNames[i] = listForCustomerNames[i].text
         if listForCustomerNames[i] == "":
-            listForCustomerNames[i] = '-'
+            listForCustomerNames[i] = None
         listForCustomerCompanyNames[i] = listForCustomerCompanyNames[i].text
         if listForCustomerCompanyNames[i] == "":
-            listForCustomerCompanyNames[i] = '-'
+            listForCustomerCompanyNames[i] = None
 
     # putting info in list
     for i in range(len(listForLotIDs)):
@@ -104,7 +102,7 @@ def parseTenderLot(browser, currentTender):
         if len(currentTender.deliveryTerm) >= 255:
             currentTender.deliveryTerm = toCutString(currentTender.deliveryTerm)
     except NoSuchElementException:
-        currentTender.deliveryTerm = "-"
+        currentTender.deliveryTerm = None
 
     try:
         currentTender.paymentTerm = browser.find_element_by_xpath(
@@ -112,7 +110,7 @@ def parseTenderLot(browser, currentTender):
         if len(currentTender.paymentTerm) >= 255:
             currentTender.paymentTerm = toCutString(currentTender.paymentTerm)
     except NoSuchElementException:
-        currentTender.paymentTerm = "-"
+        currentTender.paymentTerm = None
 
     try:
         tempForProne = browser.find_element_by_xpath(
@@ -120,7 +118,7 @@ def parseTenderLot(browser, currentTender):
         currentTender.customerPhone = tempForProne[-1].replace(' ', '')
         tempForProne.clear()
     except NoSuchElementException:
-        currentTender.customerPhone = '-'
+        currentTender.customerPhone = None
 
     try:
         tempForEmail = browser.find_element_by_xpath(
@@ -128,16 +126,15 @@ def parseTenderLot(browser, currentTender):
         currentTender.customerEmail = tempForEmail[-1].replace(' ', '')
         tempForEmail.clear()
     except NoSuchElementException:
-        currentTender.customerEmail = '-'
+        currentTender.customerEmail = None
 
-    currentTender.description = "Add"
     try:
         currentTender.specialConditions = browser.find_element_by_xpath(
             "//*[@id='product-details']/div[@class='tab-content-wrapper']/p").text
         if len(currentTender.specialConditions) >= 255:
             currentTender.specialConditions = toCutString(currentTender.specialConditions)
     except NoSuchElementException:
-        currentTender.specialConditions = "-"
+        currentTender.specialConditions = None
 
     currentTender.type = "Тендер"
 
@@ -145,29 +142,29 @@ def parseTenderLot(browser, currentTender):
     if "Вложение" in content:
         currentTender.attachedFile = currentTender.linkToLot + "/download"
     else:
-        currentTender.attachedFile = "-"
+        currentTender.attachedFile = None
 
 
-def printLots(listOfTenders):
-    tempCountForPrint = 1
-    for tender in listOfTenders:
-        print("#", tempCountForPrint,
-              "\n  lotID", tender.lotID,
-              "\n  type\n   ", tender.type,
-              "\n  category\n   ", tender.category,
-              "\n  linkToLot\n   ", tender.linkToLot,
-              "\n  startDate\n   ", tender.startDate,
-              "\n  endDate\n   ", tender.endDate,
-              "\n  status\n   ", tender.status,
-              "\n  customerAddressArea\n   ", tender.customerAddressArea,
-              "\n  purchaseName\n   ", tender.purchaseName,
-              "\n  customerName\n   ", tender.customerName,
-              "\n  attachedFile\n   ", tender.attachedFile,
-              "\n  paymentTerm\n   ", tender.paymentTerm,
-              "\n  customerCompanyName\n   ", tender.customerCompanyName,
-              "\n  customerPhone\n   ", tender.customerPhone,
-              "\n  customerEmail\n   ", tender.customerEmail,
-              "\n  specialConditions\n   ", tender.specialConditions,
-              "\n  deliveryTerm\n   ", tender.deliveryTerm,
-              "\n ============================\n")
-        tempCountForPrint += 1
+# def printLots(listOfTenders):
+#     tempCountForPrint = 1
+#     for tender in listOfTenders:
+#         print("#", tempCountForPrint,
+#               "\n  lotID", tender.lotID,
+#               "\n  type\n   ", tender.type,
+#               "\n  category\n   ", tender.category,
+#               "\n  linkToLot\n   ", tender.linkToLot,
+#               "\n  startDate\n   ", tender.startDate,
+#               "\n  endDate\n   ", tender.endDate,
+#               "\n  status\n   ", tender.status,
+#               "\n  customerAddressArea\n   ", tender.customerAddressArea,
+#               "\n  purchaseName\n   ", tender.purchaseName,
+#               "\n  customerName\n   ", tender.customerName,
+#               "\n  attachedFile\n   ", tender.attachedFile,
+#               "\n  paymentTerm\n   ", tender.paymentTerm,
+#               "\n  customerCompanyName\n   ", tender.customerCompanyName,
+#               "\n  customerPhone\n   ", tender.customerPhone,
+#               "\n  customerEmail\n   ", tender.customerEmail,
+#               "\n  specialConditions\n   ", tender.specialConditions,
+#               "\n  deliveryTerm\n   ", tender.deliveryTerm,
+#               "\n ============================\n")
+#         tempCountForPrint += 1
