@@ -25,22 +25,11 @@ def executeParserOrders():
     link = 'https://xarid.uzautomotors.com/public/order'
     func.openAndParsePage(browser, link, listOfLots)
 
-    # # reopening browser bc this bitch won't load
-    # browser.quit()
-    # browser = webdriver.Chrome('chromedriver.exe', options=options)
-    #
-    # # open contests page
-    # link = 'http://etender.uzex.uz/lots/1/0'
-    # func.openAndLoadPage(browser, link)
-    #
-    # # parse contests
-    # func.parseFromPage(browser, listOfLots)
-    #
     print("Parsed successfully")
     # close browser
     browser.quit()
 
-    # # database input
+    # database input
     while True:
         try:
             con = psycopg2.connect(
@@ -76,18 +65,18 @@ def executeParserOrders():
 
 
 while True:
-    # try:
-    executeParserOrders()
-    # except TimeoutException:
-    #     print("TIMEOUT_EXCEPTION")
-    # except WebDriverException:
-    #     print("WEB_DRIVER_EXCEPTION")
-    # except:
-    #     print("ERROR")
-    # finally:
+    try:
+        executeParserOrders()
+    except TimeoutException:
+        print("TIMEOUT_EXCEPTION")
+    except WebDriverException:
+        print("WEB_DRIVER_EXCEPTION")
+    except:
+        print("ERROR")
+    finally:
         # setting repeating time
-    timerTime = 90
-    print("\n~~~~~~~~~~~~~~~~~~~~~\n"
-          "Parser will start again in", timerTime, "seconds"
-          "\n~~~~~~~~~~~~~~~~~~~~~\n")
-    time.sleep(timerTime)
+        timerTime = 90
+        print("\n~~~~~~~~~~~~~~~~~~~~~\n"
+              "Parser will start again in", timerTime, "seconds"
+              "\n~~~~~~~~~~~~~~~~~~~~~\n")
+        time.sleep(timerTime)

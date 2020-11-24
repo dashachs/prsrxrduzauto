@@ -25,7 +25,6 @@ def getForEverything(con, listOfLots):  # название временное
     print("Processing data...")
     for lot in listOfLots:
         getForThisLot(con, lot)
-        # printLotIDs(lot)
     print("Data was processed successfully\n"
           "Adding to Database...")
 
@@ -74,7 +73,6 @@ def getCategoryId(con, required):
     rows = cur.fetchall()
     for row in rows:
         if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
-            print("getCategoryId done successfully")
             return row[0]
     print("Category was not found:", required)
     categoryId = insertInToBiddingCategories(con, required)
@@ -108,7 +106,6 @@ def getAreaId(con, required):
     scrap = scrap.replace('p', 'р')
     for row in rows:
         if scrap in row[2].lower().replace(' ', ''):
-            print("getAreaId done successfully")
             return row[1]
     print("Area was not found:", required)
     rows.clear()
