@@ -5,6 +5,11 @@ from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
 import object_of_lot
 
+def toCutString(text, length=255):
+    for i in range(length-5, 0, -1):
+        if text[i] == '.' or text[i] == ';':
+            text=text[0:i+1]+'..'
+            return text
 
 def openAndParsePage(browser, link, listOfTenders):
     browser.get(link)
@@ -94,6 +99,8 @@ def parseTenderLot(browser, currentTender):
     try:
         currentTender.deliveryTerm = browser.find_element_by_xpath(
             "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/span[text()='II. Условия поставки']/following::p[1]").text
+        if len(currentTender.deliveryTerm) >= 255:
+            currentTender.deliveryTerm = toCutString(currentTender.deliveryTerm)
     except NoSuchElementException:
         currentTender.deliveryTerm = "-"
 
@@ -119,6 +126,8 @@ def parseTenderLot(browser, currentTender):
     try:
         currentTender.specialConditions = browser.find_element_by_xpath(
             "//*[@id='product-details']/div[@class='tab-content-wrapper']/p").text
+        if len(currentTender.specialConditions) >= 255:
+            currentTender.specialConditions = toCutString(currentTender.specialConditions)
     except NoSuchElementException:
         currentTender.specialConditions = "-"
 

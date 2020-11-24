@@ -1,12 +1,12 @@
 def inputToDB(con, lot):
     cur = con.cursor()
     cur.execute(
-        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, description, payment_term, customer_company_name, customer_phone, customer_email, special_conditions) "
-        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, payment_term, customer_company_name, customer_phone, customer_email, special_conditions) "
+        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startDate, lot.endDate, lot.status,
          lot.customerAddressCountryID, lot.customerAddressAreaID,
          lot.purchaseName, lot.customerName, lot.deliveryTerm,
-         lot.attachedFile, lot.description, lot.paymentTerm,
+         lot.attachedFile, lot.paymentTerm,
          lot.customerCompanyName, lot.customerPhone, lot.customerEmail,
          lot.specialConditions))
     print("{} was inserted successfully".format(lot.lotID))
