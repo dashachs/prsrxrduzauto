@@ -106,7 +106,13 @@ def parseTenderLot(browser, currentTender):
     except NoSuchElementException:
         currentTender.deliveryTerm = "-"
 
-    currentTender.paymentTerm = "Add"
+    try:
+        currentTender.paymentTerm = browser.find_element_by_xpath(
+            "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/b[text()='III. Условия оплаты']/following::*[2]").text
+        if len(currentTender.paymentTerm) >= 255:
+            currentTender.paymentTerm = toCutString(currentTender.paymentTerm)
+    except NoSuchElementException:
+        currentTender.paymentTerm = "-"
 
     try:
         tempForProne = browser.find_element_by_xpath(
