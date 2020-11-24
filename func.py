@@ -5,6 +5,11 @@ from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
 import object_of_lot
 
+def toCutString(text, length=255):
+    for i in range(250, 0, -1):
+        if text[i] == '.' or text[i] == ';':
+            text=text[0:i+1]+'..'
+            return text
 
 def openAndParsePage(browser, link, listOfTenders):
     browser.get(link)
