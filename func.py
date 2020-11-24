@@ -27,14 +27,15 @@ def openAndParsePage(browser, link, listOfTenders):
         if i + 1 != numberOfPages:
             try:
                 link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
+                # print(link)
                 browser.get(link)
             except NoSuchElementException:
                 print("\n===  NoSuchElementException  ===")
             finally:
                 continue
-    # parse every tender page
     for tender in listOfTenders:
         parseTenderLot(browser, tender)
+    # printLots(listOfTenders)
 
 
 def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
@@ -57,8 +58,6 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
         if listForPurchaseNames[i] == "":
             listForPurchaseNames[i] = None
         listForCategories[i] = listForCategories[i].text
-        if listForCategories[i] == "":
-            listForCategories[i] = None
         listForCustomerNames[i] = listForCustomerNames[i].text
         if listForCustomerNames[i] == "":
             listForCustomerNames[i] = None
@@ -78,6 +77,7 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
         listOfTenders[size].category = listForCategories[i]
         listOfTenders[size].customerName = listForCustomerNames[i]
         listOfTenders[size].customerCompanyName = listForCustomerCompanyNames[i]
+        # parse current
 
     # clear lists
     listForLotIDs.clear()
@@ -94,7 +94,7 @@ def parseTenderLot(browser, currentTender):
     try:
         currentTender.customerAddressArea = browser.find_element_by_xpath("//ul[@class='infos']/li[2]/p[@class='info']").text
     except NoSuchElementException:
-        currentTender.customerAddressArea = None
+        currentTender.customerAddressArea = "-"
 
     try:
         currentTender.deliveryTerm = browser.find_element_by_xpath(
