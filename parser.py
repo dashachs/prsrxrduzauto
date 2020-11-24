@@ -59,9 +59,9 @@ def executeParserOrders():
     dbUser.getForEverything(con, listOfLots)
 
     # adding to DB
-    # for lot in listOfLots:
-    #     if not dbUser.inTable(con, lot.lotID):
-    #         dbUser.inputToDB(con, lot)
+    for lot in listOfLots:
+        if not dbUser.inTable(con, lot.lotID):
+            dbUser.inputToDB(con, lot)
 
     # find expired lots
     dbUser.findExpiredLots(con)

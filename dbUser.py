@@ -1,9 +1,7 @@
 def inputToDB(con, lot):
     cur = con.cursor()
     cur.execute(
-        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, "
-        "status, country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, description, "
-        "payment_term, customer_company_name, customer_phone, customer_email, special_conditions) "
+        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, description, payment_term, customer_company_name, customer_phone, customer_email, special_conditions) "
         "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startDate, lot.endDate, lot.status,
          lot.customerAddressCountryID, lot.customerAddressAreaID,
@@ -113,26 +111,13 @@ def getAreaId(con, required):
             print("getAreaId done successfully")
             return row[1]
     print("Area was not found:", required)
-    # cur.execute("INSERT INTO geo_areas_translations(id, area_id, name, locale) VALUES (%s, %s, %s, %s)",
-    #             (rows[-1][0] + 1,
-    #              rows[-1][1] + 1,
-    #              required,
-    #              'rus'))
-    # cur.execute("INSERT INTO geo_areas_translations(id, area_id, name, locale) VALUES (%s, %s, %s, %s)",
-    #             (rows[-1][0] + 2,
-    #              rows[-1][1] + 1,
-    #              required,
-    #              'uzb'))
-    # con.commit()
-    # print("Area was added to Database successfully")
     rows.clear()
     return -1
-    # return rows[-1][1] + 1
 
 
 def inTable(con, lotNumber):
     cur = con.cursor()
-    cur.execute("SELECT lot_number FROM etender_uzex_test")
+    cur.execute("SELECT lot_number FROM xarid_uzauto_test")
     rows = cur.fetchall()
     for row in rows:
         if int(lotNumber) == row[0]:

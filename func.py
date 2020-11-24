@@ -122,7 +122,7 @@ def parseTenderLot(browser, currentTender):
     except NoSuchElementException:
         currentTender.specialConditions = "-"
 
-    currentTender.type = "Конкурс"
+    currentTender.type = "Тендер"
 
     content = browser.page_source
     if "Вложение" in content:
