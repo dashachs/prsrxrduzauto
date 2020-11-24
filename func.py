@@ -5,11 +5,13 @@ from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
 import object_of_lot
 
+
 def toCutString(text, length=255):
     for i in range(length-5, 0, -1):
         if text[i] == '.' or text[i] == ';':
-            text=text[0:i+1]+'..'
+            text = text[0:i+1]+'..'
             return text
+
 
 def openAndParsePage(browser, link, listOfTenders):
     browser.get(link)
@@ -70,7 +72,7 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
         size = len(listOfTenders)
         listOfTenders.append(object_of_lot.lot())
         listOfTenders[size].lotID = int(listForLotIDs[i])
-        listOfTenders[size].link = (tempForLinkText + "/") + listForLotIDs[i]
+        listOfTenders[size].linkToLot = (tempForLinkText + "/") + listForLotIDs[i]
         listOfTenders[size].purchaseName = listForPurchaseNames[i]
         listOfTenders[size].startDate = listForStartDates[i][0:10]
         listOfTenders[size].endDate = listForEndDates[i][0:10]
@@ -90,7 +92,7 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
 
 
 def parseTenderLot(browser, currentTender):
-    browser.get(currentTender.link)
+    browser.get(currentTender.linkToLot)
     try:
         currentTender.customerAddressArea = browser.find_element_by_xpath("//ul[@class='infos']/li[2]/p[@class='info']").text
     except NoSuchElementException:
@@ -135,7 +137,7 @@ def parseTenderLot(browser, currentTender):
 
     content = browser.page_source
     if "Вложение" in content:
-        currentTender.attachedFile = currentTender.link + "/download"
+        currentTender.attachedFile = currentTender.linkToLot + "/download"
     else:
         currentTender.attachedFile = "-"
 
@@ -147,7 +149,7 @@ def printLots(listOfTenders):
               "\n  lotID", tender.lotID,
               "\n  type\n   ", tender.type,
               "\n  category\n   ", tender.category,
-              "\n  link\n   ", tender.link,
+              "\n  linkToLot\n   ", tender.linkToLot,
               "\n  startDate\n   ", tender.startDate,
               "\n  endDate\n   ", tender.endDate,
               "\n  status\n   ", tender.status,
