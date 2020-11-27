@@ -1,33 +1,61 @@
-class lot:
-    def __init__(self, lotID=None, type=None, category=None, categoryID=None, linkToLot=None, startDate=None,
-                 endDate=None, status='relevant', purchaseName=None, customerName=None, customerCompanyName=None,
-                 customerPhone=None, customerEmail=None, customerAddressCountryID=220, customerAddressArea=None,
-                 customerAddressAreaID=None, deliveryTerm=None, specialConditions=None, attachedFile=None):
-        self.lotID = lotID  # - номер
-        self.type = type  # - тендер
-        self.category = category  # - Категория
-        self.categoryID = categoryID  # - ID категории
-        self.linkToLot = linkToLot  # - ссылка https://xarid.uzautomotors.com/public/order/ + номер
-        self.startDate = startDate  # - Дата подачи
-        self.endDate = endDate  # - Срок
-        self.status = status  # status — (relevant/expired)
-        self.purchaseName = purchaseName  # - Наименование конкурса
-        self.customerName = customerName  # -Наименование заказчика
-        self.customerCompanyName = customerCompanyName  # -Наименование компании заказчика
-        self.customerPhone = customerPhone  # - телефон заказчика
-        self.customerEmail = customerEmail  # - email заказчика
-        self.customerAddressCountryID = customerAddressCountryID  # -ID адрес заказчика (country ID)
-        self.customerAddressArea = customerAddressArea  # -Адрес заказчика (area)
-        self.customerAddressAreaID = customerAddressAreaID  # -ID адрес заказчика (area ID)
-        self.deliveryTerm = deliveryTerm  # -Условия поставки
-        self.specialConditions = specialConditions  # -Особые условия (условия участия)
-        self.attachedFile = attachedFile  # -Прикреплённый файл (ссылка на скачивание)
+from datetime import datetime
 
-# номер
-# ссылка https://xarid.uzautomotors.com/public/order/ + номер
-# Дата подачи startedAt
-# Наименование конкурса purchaseName
-# Раздел category
-# Срок endedAt
-# Покупатель customerName
-# Компания customerCompanyName
+
+class Lot:
+    def __init__(self, id=None, name=None, description_short=None, description_long=None, parent_id=None, parent=None,
+                 country=None, country_id=None, region=None, region_id=None, area=None, area_id=None, subject=None,
+                 subject_id=None, category=None, category_id=None, source=None, source_id=None, currency=None,
+                 currency_id=None, winner=None, winner_id=None, type=None, number=None, source_url=None, quantity=None,
+                 measure=None, price=None, price_lowest=None, participants=None, advance_amount=None,
+                 advance_payment_days=None, remains_payment_days=None, deposit_amount=None, started_at=None,
+                 closed_at=None, ended_at=None, status=None, is_visible=None, is_approved=None,
+                 purchase_conditions=None, delivery_address=None, delivery_conditions=None, delivery_time=None,
+                 transaction_number=None, transaction_sum=None, created_at=datetime.now(), updated_at=datetime.now()):
+        self.id = id
+        self.name = name
+        self.description_short = description_short
+        self.description_long = description_long
+        self.parent_id = parent_id
+        self.parent = parent
+        self.country = country
+        self.country_id = country_id
+        self.region = region
+        self.region_id = region_id
+        self.area = area
+        self.area_id = area_id
+        self.subject = subject
+        self.subject_id = subject_id
+        self.category = category
+        self.category_id = category_id
+        self.source = source
+        self.source_id = source_id
+        self.currency = currency
+        self.currency_id = currency_id
+        self.winner = winner
+        self.winner_id = winner_id
+        self.type = type
+        self.number = number
+        self.source_url = source_url
+        self.quantity = quantity
+        self.measure = measure
+        self.price = price
+        self.price_lowest = price_lowest
+        self.participants = participants
+        self.advance_amount = advance_amount
+        self.advance_payment_days = advance_payment_days
+        self.remains_payment_days = remains_payment_days
+        self.deposit_amount = deposit_amount
+        self.started_at = started_at
+        self.closed_at = closed_at
+        self.ended_at = ended_at
+        self.status = status
+        self.is_visible = is_visible
+        self.is_approved = is_approved
+        self.purchase_conditions = purchase_conditions
+        self.delivery_address = delivery_address
+        self.delivery_conditions = delivery_conditions
+        self.delivery_time = delivery_time
+        self.transaction_number = transaction_number
+        self.transaction_sum = transaction_sum
+        self.created_at = created_at
+        self.updated_at = updated_at
