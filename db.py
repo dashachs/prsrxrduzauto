@@ -80,6 +80,24 @@ def get_source_id(con, required):
     print("Source was not found:", required)
 
 
+def get_subject_id(con, required):
+    cur = con.cursor()
+    cur.execute("SELECT id name FROM bidding_subjects")
+    rows = cur.fetchall()
+    for row in rows:
+        if row[1].lower.replace(' ', '') == required.lower().replace(' ', ''):
+            return row[0]
+    print("subject was not found:", required)
+    # надо дописать действия при отсутсвии информации
+
+# def get_currency_id(con, required):
+
+
+# def get_country_id(con, required):
+
+
+# def get_region_id(con, required):
+
 
 
 def get_area_id(con, required):
