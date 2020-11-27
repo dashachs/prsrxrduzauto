@@ -1,13 +1,3 @@
-def in_table(con, lotNumber):
-    cur = con.cursor()
-    cur.execute("SELECT lot_number FROM xarid_uzauto_test")
-    rows = cur.fetchall()
-    for row in rows:
-        if int(lotNumber) == row[0]:
-            return True
-    return False
-
-
 def transliterate(name):
     # Слоаврь с заменами
     dictionary = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i',
@@ -20,29 +10,46 @@ def transliterate(name):
     return name
 
 
+def in_table(con, lotNumber):
+    # Проверяем на наличие лота в таблице
+    cur = con.cursor()
+    cur.execute("SELECT number FROM bidding_lots")
+    rows = cur.fetchall()
+    for row in rows:
+        if int(lotNumber) == row[0]:
+            rows.clear()
+            return True
+    return False
+
+
 def find_expired_lots(con):
+    # находим просроченные лоты и изменяем их статус
     cur = con.cursor()
     # setting timezone for current session to avoid mistakes
     cur.execute("SET TIMEZONE=5")
-    cur.execute("UPDATE xarid_uzauto_test SET status = 'expired' WHERE ended_at < now()")
+    cur.execute("UPDATE bidding_lots SET status = 'expired' WHERE ended_at < now()")
     con.commit()
 
 
-def insert_in_to_bidding_categories(con, name):
+def add_category(con, name):
+    # добавить новую категорию в таблицу и вернуть новый id
     cur = con.cursor()
     cur.execute("SELECT id, slug FROM bidding_categories")
     rows = cur.fetchall()
     for row in rows:
         if row[1] == transliterate(name):
             return row[0]
+    category_id = rows[-1][0] + 1
     cur.execute(
         "INSERT INTO bidding_categories(id, parent_id, depth, path, slug, created_at, updated_at) VALUES (%s, %s, %s, "
-        "%s, %s, now(), now())", (rows[-1][0] + 1, 41, 2, '/41/{}/'.format(rows[-1][0] + 1), transliterate(name)))
+        "%s, %s, now(), now())", (category_id, 41, 2, '/41/{}/'.format(rows[-1][0] + 1), transliterate(name)))
     con.commit()
-    return rows[-1][0] + 1
+    rows.clear()
+    return category_id
 
 
 def get_category_id(con, required):
+    # вернуть id (если нет, то создать)
     if required.lower().replace(' ', '') == '':
         required = 'undefined'
     cur = con.cursor()
@@ -52,16 +59,14 @@ def get_category_id(con, required):
         if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
             return row[0]
     print("Category was not found:", required)
-    categoryId = insert_in_to_bidding_categories(con, required)
+    category_id = add_category(con, required)
     cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
-                (rows[-1][2] + 1, categoryId, required, 'rus'))
+                (rows[-1][2] + 1, category_id, required, 'rus'))
     cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
-                (rows[-1][2] + 2, categoryId, required, 'uzb'))
+                (rows[-1][2] + 2, category_id, required, 'uzb'))
     con.commit()
-    # print("Category was added to Database successfully")
     rows.clear()
-    # return -1
-    return categoryId
+    return category_id
 
 
 def get_area_id(con, required):
