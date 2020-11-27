@@ -20,40 +20,12 @@ def transliterate(name):
     return name
 
 
-def save_lot(con, lot):
-    cur = con.cursor()
-    cur.execute(
-        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, "
-        "country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, payment_term, "
-        "customer_company_name, customer_phone, customer_email, special_conditions) "
-        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
-        lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startDate, lot.endDate, lot.status,
-        lot.customerAddressCountryID, lot.customerAddressAreaID, lot.purchaseName, lot.customerName, lot.deliveryTerm,
-        lot.attachedFile, lot.paymentTerm, lot.customerCompanyName, lot.customerPhone, lot.customerEmail,
-        lot.specialConditions))
-    print("{} was inserted successfully".format(lot.lotID))
-    con.commit()
-
-
 def find_expired_lots(con):
     cur = con.cursor()
     # setting timezone for current session to avoid mistakes
     cur.execute("SET TIMEZONE=5")
     cur.execute("UPDATE xarid_uzauto_test SET status = 'expired' WHERE ended_at < now()")
     con.commit()
-
-
-def get_for_everything(con, listOfLots):  # название временное
-    print("Processing data...")
-    for lot in listOfLots:
-        get_for_this_lot(con, lot)
-    print("Data was processed successfully\n"
-          "Adding to Database...")
-
-
-def get_for_this_lot(con, currentLot):
-    currentLot.categoryID = get_category_id(con, currentLot.category)
-    currentLot.customerAddressAreaID = get_area_id(con, currentLot.customerAddressArea)
 
 
 def insert_in_to_bidding_categories(con, name):
@@ -109,3 +81,31 @@ def get_area_id(con, required):
     print("Area was not found:", required)
     rows.clear()
     return -1
+
+
+def get_for_this_lot(con, currentLot):
+    currentLot.categoryID = get_category_id(con, currentLot.category)
+    currentLot.customerAddressAreaID = get_area_id(con, currentLot.customerAddressArea)
+
+
+def get_for_everything(con, listOfLots):  # название временное
+    print("Processing data...")
+    for lot in listOfLots:
+        get_for_this_lot(con, lot)
+    print("Data was processed successfully\n"
+          "Adding to Database...")
+
+
+def save_lot(con, lot):
+    cur = con.cursor()
+    cur.execute(
+        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, "
+        "country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, payment_term, "
+        "customer_company_name, customer_phone, customer_email, special_conditions) "
+        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
+            lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startDate, lot.endDate, lot.status,
+            lot.customerAddressCountryID, lot.customerAddressAreaID, lot.purchaseName, lot.customerName,
+            lot.deliveryTerm, lot.attachedFile, lot.paymentTerm, lot.customerCompanyName, lot.customerPhone,
+            lot.customerEmail, lot.specialConditions))
+    print("{} was inserted successfully".format(lot.lotID))
+    con.commit()
