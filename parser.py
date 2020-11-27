@@ -4,7 +4,7 @@ from psycopg2 import OperationalError
 import psycopg2
 import time
 
-import dbUser
+import db
 import func
 
 
@@ -45,15 +45,15 @@ def executeParserOrders():
             print("Database was opened successfully")
             break
 
-    dbUser.getForEverything(con, listOfLots)
+    db.get_for_everything(con, listOfLots)
 
     # adding to DB
     for lot in listOfLots:
-        if not dbUser.inTable(con, lot.lotID):
-            dbUser.inputToDB(con, lot)
+        if not db.in_table(con, lot.lotID):
+            db.save_lot(con, lot)
 
     # find expired lots
-    dbUser.findExpiredLots(con)
+    db.find_expired_lots(con)
 
     print("Database is up-to-date")
 
