@@ -7,10 +7,11 @@ class Lot:
                  subject_id=None, category=None, category_id=None, source=None, source_id=None, currency=None,
                  currency_id=None, winner=None, winner_id=None, type=None, number=None, source_url=None, quantity=None,
                  measure=None, price=None, price_lowest=None, participants=None, advance_amount=None,
-                 advance_payment_days=None, remains_payment_days=None, deposit_amount=None, started_at=None,
-                 closed_at=None, ended_at=None, status=None, is_visible=None, is_approved=None,
+                 advance_payment_days=None, remains_payment_days=None, deposit_amount=None, payment_term=None,
+                 started_at=None, closed_at=None, ended_at=None, status=None, is_visible=None, is_approved=None,
                  purchase_conditions=None, delivery_address=None, delivery_conditions=None, delivery_time=None,
-                 transaction_number=None, transaction_sum=None, created_at=datetime.now(), updated_at=datetime.now()):
+                 delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
+                 updated_at=datetime.now()):
         self.id = id
         self.name = name
         self.description_short = description_short
@@ -45,6 +46,7 @@ class Lot:
         self.advance_payment_days = advance_payment_days
         self.remains_payment_days = remains_payment_days
         self.deposit_amount = deposit_amount
+        self.payment_term = payment_term
         self.started_at = started_at
         self.closed_at = closed_at
         self.ended_at = ended_at
@@ -55,6 +57,7 @@ class Lot:
         self.delivery_address = delivery_address
         self.delivery_conditions = delivery_conditions
         self.delivery_time = delivery_time
+        self.delivery_term = delivery_term
         self.transaction_number = transaction_number
         self.transaction_sum = transaction_sum
         self.created_at = created_at
