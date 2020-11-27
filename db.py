@@ -49,7 +49,7 @@ def add_category(con, name):
 
 
 def get_category_id(con, required):
-    # вернуть id (если нет, то создать)
+    # вернуть id категории лота (если нет, то создать)
     if required.lower().replace(' ', '') == '':
         required = 'undefined'
     cur = con.cursor()
@@ -67,6 +67,19 @@ def get_category_id(con, required):
     con.commit()
     rows.clear()
     return category_id
+
+
+def get_source_id(con, required):
+    # вернуть id источника (если нет, то добавить заранее вручную)
+    cur = con.cursor()
+    cur.execute("SELECT id, url FROM bidding_sources")
+    rows = cur.fetchall()
+    for row in rows:
+        if row[1] in required:
+            return row[0]
+    print("Source was not found:", required)
+
+
 
 
 def get_area_id(con, required):
