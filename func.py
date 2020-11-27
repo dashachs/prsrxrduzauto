@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
-import object_of_lot
+import lot
 
 
 def toCutString(text, length=255):
@@ -68,7 +68,7 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
     # putting info in list
     for i in range(len(listForLotIDs)):
         size = len(listOfTenders)
-        listOfTenders.append(object_of_lot.lot())
+        listOfTenders.append(lot.Lot())
         listOfTenders[size].lotID = int(listForLotIDs[i])
         listOfTenders[size].linkToLot = (tempForLinkText + "/") + listForLotIDs[i]
         listOfTenders[size].purchaseName = listForPurchaseNames[i]
