@@ -65,18 +65,18 @@ def executeParserOrders():
 
 
 while True:
-    try:
-        executeParserOrders()
-    except TimeoutException:
-        print("TIMEOUT_EXCEPTION")
-    except WebDriverException:
-        print("WEB_DRIVER_EXCEPTION")
-    except:
-        print("ERROR")
-    finally:
-        # setting repeating time
-        timerTime = 90
-        print("\n~~~~~~~~~~~~~~~~~~~~~\n"
-              "Parser will start again in", timerTime, "seconds"
-              "\n~~~~~~~~~~~~~~~~~~~~~\n")
-        time.sleep(timerTime)
+    # try:
+    executeParserOrders()
+    # except TimeoutException:
+    #     print("TIMEOUT_EXCEPTION")
+    # except WebDriverException:
+    #     print("WEB_DRIVER_EXCEPTION")
+    # except:
+    #     print("ERROR")
+    # finally:
+    #     # setting repeating time
+    #     timerTime = 90
+    #     print("\n~~~~~~~~~~~~~~~~~~~~~\n"
+    #           "Parser will start again in", timerTime, "seconds"
+    #           "\n~~~~~~~~~~~~~~~~~~~~~\n")
+    #     time.sleep(timerTime)
