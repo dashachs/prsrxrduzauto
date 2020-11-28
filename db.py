@@ -87,8 +87,8 @@ def get_subject_id(con, required):
     for row in rows:
         if row[1].lower.replace(' ', '') == required.lower().replace(' ', ''):
             return row[0]
-    print("subject was not found:", required)
-    # надо дописать действия при отсутсвии информации
+    print("subject was not found:", required)  # надо дописать действия при отсутсвии информации
+
 
 # def get_currency_id(con, required):
 
@@ -96,8 +96,22 @@ def get_subject_id(con, required):
 # def get_country_id(con, required):
 
 
-# def get_region_id(con, required):
-
+def getRegionId(con, required):
+    # регионов узбекистана всего 15 (судя по таблице)
+    # и добавление новых не в нашей юрисдикции
+    # но если другая страна, нужно будет добавить функцию
+    cur = con.cursor()
+    cur.execute("SELECT region_id, name FROM geo_regions_translations")
+    rows = cur.fetchall()
+    if required == '' or required == '-' or required == None:
+        required = 'Не указан'
+    for row in rows:
+        if row[1].lower().replace(' ', '') == required.replace('город', '').lower().replace(' ', ''):
+            # print("getRegionId done successfully")
+            return row[0]
+    print("  Region was not found:", required)
+    rows.clear()
+    return -1
 
 
 def get_area_id(con, required):
