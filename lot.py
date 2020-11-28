@@ -13,7 +13,7 @@ class Lot:
                  delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
                  updated_at=datetime.now()):
         self.id = id
-        self.name = name
+        self.name = name  # название / purchase name
         self.description_short = description_short
         self.description_long = description_long
         self.parent_id = parent_id
@@ -35,7 +35,7 @@ class Lot:
         self.winner = winner
         self.winner_id = winner_id
         self.type = type
-        self.number = number
+        self.number = number  # номер лота (lot id)
         self.source_url = source_url
         self.quantity = quantity
         self.measure = measure
