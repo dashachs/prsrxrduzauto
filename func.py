@@ -4,7 +4,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
 import lot
-import time
 
 
 def toCutString(text, length=255):
@@ -35,8 +34,8 @@ def openAndParsePage(browser, link, listOfTenders):
                 print("\n===  NoSuchElementException  ===")
             finally:
                 continue
-    # for tender in listOfTenders:
-    #     parseTenderLot(browser, tender)
+    for tender in listOfTenders:
+        parseTenderLot(browser, tender)
     printLots(listOfTenders)
 
 
@@ -54,7 +53,7 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
     list_for_names = browser.find_elements_by_xpath("//div[@class='col-lg-12']/div/p/a")
     list_for_categories = browser.find_elements_by_xpath("//div[@class='col-lg-12']/div/small/a")
 
-    # formating text
+    # formatting text
     for i in range(len(list_for_lot_numbers)):
         list_for_lot_numbers[i] = list_for_lot_numbers[i].text.replace(' ', '').replace('ID:', '')
         list_for_started_at[i] = list_for_started_at[i].text.replace('Дата подачи : ', '')
@@ -87,59 +86,80 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
 
 
 def parseTenderLot(browser, currentTender):
-    browser.get(currentTender.linkToLot)
-    try:
-        currentTender.customerAddressArea = browser.find_element_by_xpath("//ul[@class='infos']/li[2]/p[@class='info']").text
-    except NoSuchElementException:
-        currentTender.customerAddressArea = "-"
+    browser.get(currentTender.source_url)
 
     try:
-        currentTender.deliveryTerm = browser.find_element_by_xpath(
-            "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/span[text()='II. Условия поставки']/following::p[1]").text
-        if len(currentTender.deliveryTerm) >= 255:
-            currentTender.deliveryTerm = toCutString(currentTender.deliveryTerm)
+        currentTender.delivery_term = browser.find_element_by_xpath(
+            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'поставки')]/following::div[1]/div[@class='col-lg-12']/*").text
+        if len(currentTender.delivery_term) >= 255:
+            currentTender.delivery_term = toCutString(currentTender.delivery_term)
     except NoSuchElementException:
-        currentTender.deliveryTerm = None
+        currentTender.delivery_term = None
+    currentTender.delivery_conditions = currentTender.delivery_term
 
     try:
-        currentTender.paymentTerm = browser.find_element_by_xpath(
-            "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/b[text()='III. Условия оплаты']/following::*[2]").text
-        if len(currentTender.paymentTerm) >= 255:
-            currentTender.paymentTerm = toCutString(currentTender.paymentTerm)
+        temp_for_payment_term = browser.find_elements_by_xpath(
+            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'оплаты')]/following::div[1]/div[@class='col-lg-12']/*")
+        for temp in temp_for_payment_term:
+            if temp.text != "":
+                currentTender.payment_term = temp.text
+                break
+        temp_for_payment_term.clear()
+        if len(currentTender.payment_term) >= 255:
+            currentTender.payment_term = toCutString(currentTender.payment_term)
     except NoSuchElementException:
-        currentTender.paymentTerm = None
+        currentTender.payment_term = None
 
     try:
-        tempForProne = browser.find_element_by_xpath(
-            "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/p[contains(text(),'Тел')]").text.split(":")
-        currentTender.customerPhone = tempForProne[-1].replace(' ', '')
-        tempForProne.clear()
+        currentTender.phone = browser.find_element_by_xpath(
+            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Контакты')]/following::div[1]/div[@class='col-lg-12']/*/*[contains(text(),'Тел')]/following::*[1]").text
     except NoSuchElementException:
-        currentTender.customerPhone = None
+        currentTender.phone = None
 
     try:
-        tempForEmail = browser.find_element_by_xpath(
-            "//*[@id='product-details']/div[@class='tab-content-wrapper']/span/p[contains(text(),'mail')]").text.split(":")
-        currentTender.customerEmail = tempForEmail[-1].replace(' ', '')
-        tempForEmail.clear()
+        currentTender.email2 = browser.find_element_by_xpath(
+            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Контакты')]/following::div[1]/div[@class='col-lg-12']/*/*[contains(text(),'mail')]/following::*[1]").text
     except NoSuchElementException:
-        currentTender.customerEmail = None
+        currentTender.email2 = None
 
     try:
-        currentTender.specialConditions = browser.find_element_by_xpath(
-            "//*[@id='product-details']/div[@class='tab-content-wrapper']/p").text
-        if len(currentTender.specialConditions) >= 255:
-            currentTender.specialConditions = toCutString(currentTender.specialConditions)
+        currentTender.purchase_conditions = browser.find_element_by_xpath(
+            "//div[@class='box_general_2']/p[@class='text-center']").text
+        if len(currentTender.purchase_conditions) >= 255:
+            currentTender.purchase_conditions = toCutString(currentTender.purchase_conditions)
     except NoSuchElementException:
-        currentTender.specialConditions = None
+        currentTender.purchase_conditions = None
 
-    currentTender.type = "tender"
+    # получение реквизитов (временные переменные)
+    try:
+        requisites = browser.find_element_by_xpath(
+            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Реквизит')]/following::div[1]/div[@class='col-lg-12']/p").text
+    except NoSuchElementException:
+        requisites = None
+    temp_for_company_name = None
+    temp_for_tin = None
+    temp_for_bank = None
+    temp_for_mfo = None
+    temp_for_hisob_raqam = None
+    if requisites is not None:
+        list_of_requisites = requisites.replace("\n", ":").replace(": ", ":").split(":")
+        for i in range(len(list_of_requisites)):
+            if i != len(list_of_requisites) - 1:
+                if "Реквизитлар" in list_of_requisites[i]:
+                    temp_for_company_name = list_of_requisites[i + 1]
+                if "ИНН" in list_of_requisites[i]:
+                    temp_for_tin = list_of_requisites[i + 1]
+                    temp_for_bank = list_of_requisites[i + 2]
+                if "МФО" in list_of_requisites[i]:
+                    temp_for_mfo = list_of_requisites[i + 1]
+                if "Хисоб ракам" in list_of_requisites[i]:
+                    temp_for_hisob_raqam = list_of_requisites[i + 1]
 
-    content = browser.page_source
-    if "Вложение" in content:
-        currentTender.attachedFile = currentTender.linkToLot + "/download"
-    else:
-        currentTender.attachedFile = None
+        # content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
+    # if "Скачать прикрепленный файл" in content:
+    #     currentTender.attachedFile = currentTender.source_url + "/download"
+    # else:
+    #     currentTender.attachedFile = None
 
 
 def printLots(listOfTenders):
@@ -157,11 +177,13 @@ def printLots(listOfTenders):
               "\n  name\n   ", tender.name,
               # "\n  customerName\n   ", tender.customerName,
               # "\n  attachedFile\n   ", tender.attachedFile,
-              # "\n  paymentTerm\n   ", tender.paymentTerm,
+              "\n  payment_term\n   ", tender.payment_term,
               # "\n  customerCompanyName\n   ", tender.customerCompanyName,
               # "\n  customerPhone\n   ", tender.customerPhone,
               # "\n  customerEmail\n   ", tender.customerEmail,
-              # "\n  specialConditions\n   ", tender.specialConditions,
-              # "\n  deliveryTerm\n   ", tender.deliveryTerm,
+              "\n  purchase_conditions\n   ", tender.purchase_conditions,
+              "\n  delivery_term\n   ", tender.delivery_term,
+              "\n  email2\n   ", tender.email2,
+              "\n  phone\n   ", tender.phone,
               "\n ============================\n")
         tempCountForPrint += 1
