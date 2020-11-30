@@ -87,17 +87,49 @@ def get_subject_id(con, required):
     for row in rows:
         if row[1].lower.replace(' ', '') == required.lower().replace(' ', ''):
             return row[0]
-    print("subject was not found:", required)
-    # надо дописать действия при отсутсвии информации
+    print("subject was not found:", required)  # надо дописать действия при отсутсвии информации
 
-# def get_currency_id(con, required):
+
+def getCurrencyId(con, required):
+    cur = con.cursor()
+    cur.execute("SELECT id, slug FROM finance_currencies")
+    rows = cur.fetchall()
+    for row in rows:
+        if row[1].upper().replace(' ', '') == required.upper().replace(' ', ''):
+            # print("getCurrencyId done successfully", required, "ID =", row[0])
+            return row[0]
+    print("  Currency was not found:", required)
+    # cur.execute("SET TIMEZONE=5")
+    # cur.execute("INSERT INTO finance_currencies(id, slug, created_at, updated_at) VALUES (%s, %s, now(), now())",
+    #             (rows[-1][0] + 1,
+    #              required))
+    # con.commit()
+    print("  Currency was added to Database successfully")
+    # print("Please, add description manually")
+    rows.clear()
+    return -1
+    # return rows[-1][0] + 1
 
 
 # def get_country_id(con, required):
 
 
-# def get_region_id(con, required):
-
+def getRegionId(con, required):
+    # регионов узбекистана всего 15 (судя по таблице)
+    # и добавление новых не в нашей юрисдикции
+    # но если другая страна, нужно будет добавить функцию
+    cur = con.cursor()
+    cur.execute("SELECT region_id, name FROM geo_regions_translations")
+    rows = cur.fetchall()
+    if required == '' or required == '-' or required == None:
+        required = 'Не указан'
+    for row in rows:
+        if row[1].lower().replace(' ', '') == required.replace('город', '').lower().replace(' ', ''):
+            # print("getRegionId done successfully")
+            return row[0]
+    print("  Region was not found:", required)
+    rows.clear()
+    return -1
 
 
 def get_area_id(con, required):
