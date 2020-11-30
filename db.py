@@ -27,7 +27,7 @@ def find_expired_lots(con):
     cur = con.cursor()
     # setting timezone for current session to avoid mistakes
     cur.execute("SET TIMEZONE=5")
-    cur.execute("UPDATE bidding_lots SET status = 'expired' WHERE ended_at < now()")
+    cur.execute("UPDATE bidding_lots SET status = 'expired', updated_at = now() WHERE ended_at < now()")
     con.commit()
 
 
@@ -157,16 +157,48 @@ def get_for_everything(con, listOfLots):  # название временное
           "Adding to Database...")
 
 
+def get_id_from_bidding_lots(con):
+    cur = con.cursor()
+    cur.execute("SELECT id FROM bidding_lots")
+    rows = cur.fetchall()
+    return rows[-1][0] + 1
+
+
 def save_lot_in_bidding_lots(con, lot):
     cur = con.cursor()
+    new_id = get_id_from_bidding_lots(con)
     cur.execute(
-        "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, "
-        "country_id, area_id, purchase_name, customer_name, delivery_term, attached_file, payment_term, "
-        "customer_company_name, customer_phone, customer_email, special_conditions) "
-        "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (
-            lot.lotID, lot.type, lot.categoryID, lot.linkToLot, lot.startDate, lot.endDate, lot.status,
-            lot.customerAddressCountryID, lot.customerAddressAreaID, lot.purchaseName, lot.customerName,
-            lot.deliveryTerm, lot.attachedFile, lot.paymentTerm, lot.customerCompanyName, lot.customerPhone,
-            lot.customerEmail, lot.specialConditions))
-    print("{} was inserted successfully".format(lot.lotID))
+        "INSERT INTO bidding_lots(id, type, number, category_id, source_url, advance_amount, advance_payment_days, "
+        "remains_payment_days, deposit_amount, started_at, ended_at, status, is_visible, is_approved, created_at, "
+        "updated_at, subject_id, winner_id, source_id, country_id, region_id, area_id, price, currency_id, parent_id,"
+        "closed_at, views, transaction_number, transaction_sum, price_lowest, participants, quantity) "
+        "VALUES (%s, %s, %s, %s, %s, null, null, null, null, %s, %s, %s, true, true, now(), now(), %s, null, %s, %s, "
+        "%s, %s, null, null, null, null, 0, null, null, null, null, null)", (
+            new_id, lot.type, lot.number, lot.category_id, lot.source_url, lot.started_at, lot.ended_at, lot.status,
+            lot.subject_id, lot.source_id, lot.country_id, lot.region_id, lot.area_id))
+    con.commit()
+    return new_id
+
+
+def get_id_from_bidding_lots_translations(con):
+    cur = con.cursor()
+    cur.execute("SELECT id FROM bidding_lots_translations")
+    rows = cur.fetchall()
+    return rows[-1][0] + 1
+
+
+def save_lot_in_biddinng_lots_translations(con, lot):
+    lot_id = save_lot_in_bidding_lots(con, lot)
+    new_id = get_id_from_bidding_lots_translations(con)
+    cur = con.cursor()
+    cur.execute("INSERT INTO bidding_lots_translations(id, lot_id, name, description_short, description_long, "
+                "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
+                "VALUES (%s, %s, %s, null, null, %s, %s, %s, %s, %s, null)", (
+                    new_id, lot_id, lot.name, lot.purchase_conditions, lot.delivery_conditions, lot.delivery_time,
+                    'rus', lot.delivery_address))
+    cur.execute("INSERT INTO bidding_lots_translations(id, lot_id, name, description_short, description_long, "
+                "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
+                "VALUES (%s, %s, %s, null, null, %s, %s, %s, %s, %s, null)", (
+                    new_id + 1, lot_id, lot.name, lot.purchase_conditions, lot.delivery_conditions, lot.delivery_time,
+                    'uzb', lot.delivery_address))
     con.commit()
