@@ -90,7 +90,25 @@ def get_subject_id(con, required):
     print("subject was not found:", required)  # надо дописать действия при отсутсвии информации
 
 
-# def get_currency_id(con, required):
+def getCurrencyId(con, required):
+    cur = con.cursor()
+    cur.execute("SELECT id, slug FROM finance_currencies")
+    rows = cur.fetchall()
+    for row in rows:
+        if row[1].upper().replace(' ', '') == required.upper().replace(' ', ''):
+            # print("getCurrencyId done successfully", required, "ID =", row[0])
+            return row[0]
+    print("  Currency was not found:", required)
+    # cur.execute("SET TIMEZONE=5")
+    # cur.execute("INSERT INTO finance_currencies(id, slug, created_at, updated_at) VALUES (%s, %s, now(), now())",
+    #             (rows[-1][0] + 1,
+    #              required))
+    # con.commit()
+    print("  Currency was added to Database successfully")
+    # print("Please, add description manually")
+    rows.clear()
+    return -1
+    # return rows[-1][0] + 1
 
 
 # def get_country_id(con, required):
