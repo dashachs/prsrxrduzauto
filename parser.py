@@ -29,36 +29,36 @@ def execute_parser_orders():
     # close browser
     browser.quit()
 
-    # # database input
-    # while True:
-    #     try:
-    #         con = psycopg2.connect(
-    #             database="postgres",
-    #             user="anwar",
-    #             password="etender.uz",
-    #             host="database-rds.cbs8omqsohea.eu-west-3.rds.amazonaws.com",
-    #             port="5432"
-    #         )
-    #     except OperationalError:
-    #         print("Failed to connect to the server. connection...")
-    #     else:
-    #         print("Database was opened successfully")
-    #         break
-    #
-    # db.get_for_everything(con, list_of_lots)
-    #
-    # # adding to DB
-    # for lot in list_of_lots:
-    #     if not db.in_table(con, lot.lotID):
-    #         db.save_lot(con, lot)
-    #
-    # # find expired lots
-    # db.find_expired_lots(con)
-    #
-    # print("Database is up-to-date")
-    #
-    # # close DB
-    # con.close()
+    # database input
+    while True:
+        try:
+            con = psycopg2.connect(
+                database="postgres",
+                user="anwar",
+                password="etender.uz",
+                host="database-rds.cbs8omqsohea.eu-west-3.rds.amazonaws.com",
+                port="5432"
+            )
+        except OperationalError:
+            print("Failed to connect to the server. connection...")
+        else:
+            print("Database was opened successfully")
+            break
+
+    db.get_for_everything(con, list_of_lots)
+
+    # adding to DB
+    for lot in list_of_lots:
+        if not db.in_table(con, lot.number, lot.source_url):
+            db.save_lot(con, lot)
+
+    # find expired lots
+    db.find_expired_lots(con)
+
+    print("Database is up-to-date")
+
+    # close DB
+    con.close()
 
     # clear list of lots
     list_of_lots.clear()

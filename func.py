@@ -45,7 +45,7 @@ def open_and_parse_page(browser, link, list_of_tenders):
         tender.subject = subject_name
         if not tender.is_sublot:
             parse_tender_lot(browser, tender, list_of_tenders)
-    print_lots(list_of_tenders)
+    # print_lots(list_of_tenders)
 
 
 def parse_tenders_from_page(browser, list_of_tenders, tempForLinkText):
