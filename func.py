@@ -155,7 +155,7 @@ def parseTenderLot(browser, currentTender):
                 if "Хисоб ракам" in list_of_requisites[i]:
                     temp_for_hisob_raqam = list_of_requisites[i + 1]
 
-        content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
+    content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
     if "Скачать прикрепленный файл" in content:
         currentTender.attached_file = browser.find_element_by_xpath(
             "//div[@class='row add_bottom_45']/div[@class='col-lg-12']/center/a").get_attribute('href')
