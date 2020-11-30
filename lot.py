@@ -4,14 +4,14 @@ from datetime import datetime
 class Lot:
     def __init__(self, id=None, name=None, description_short=None, description_long=None, parent_id=None, parent=None,
                  country=None, country_id=None, region=None, region_id=None, area=None, area_id=None, subject=None,
-                 subject_id=None, category=None, category_id=None, source=None, source_id=None, currency=None,
+                 subject_id=None, category=None, category_id=None, source_id=None, currency=None,
                  currency_id=None, winner=None, winner_id=None, type=None, number=None, source_url=None, quantity=None,
                  measure=None, price=None, price_lowest=None, participants=None, advance_amount=None,
                  advance_payment_days=None, remains_payment_days=None, deposit_amount=None, payment_term=None,
                  started_at=None, closed_at=None, ended_at=None, status=None, is_visible=None, is_approved=None,
                  purchase_conditions=None, delivery_address=None, delivery_conditions=None, delivery_time=None,
                  delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
-                 updated_at=datetime.now(), email=None, email2=None, phone=None, is_sublot=False):
+                 updated_at=datetime.now(), email=None, email2=None, phone=None, is_sublot=False, attached_file=None):
         self.id = id
         self.name = name  # название / purchase name
         self.description_short = description_short
@@ -28,7 +28,6 @@ class Lot:
         self.subject_id = subject_id
         self.category = category
         self.category_id = category_id
-        self.source = source
         self.source_id = source_id
         self.currency = currency
         self.currency_id = currency_id
@@ -66,3 +65,4 @@ class Lot:
         self.email2 = email2  # email ответственного лица
         self.phone = phone
         self.is_sublot = is_sublot
+        self.attached_file = attached_file

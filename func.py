@@ -155,11 +155,14 @@ def parseTenderLot(browser, currentTender):
                 if "Хисоб ракам" in list_of_requisites[i]:
                     temp_for_hisob_raqam = list_of_requisites[i + 1]
 
-        # content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
-    # if "Скачать прикрепленный файл" in content:
-    #     currentTender.attachedFile = currentTender.source_url + "/download"
-    # else:
-    #     currentTender.attachedFile = None
+        content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
+    if "Скачать прикрепленный файл" in content:
+        currentTender.attached_file = browser.find_element_by_xpath(
+            "//div[@class='row add_bottom_45']/div[@class='col-lg-12']/center/a").get_attribute('href')
+    else:
+        currentTender.attached_file = None
+
+
 
 
 def printLots(listOfTenders):
@@ -176,7 +179,7 @@ def printLots(listOfTenders):
               # "\n  customerAddressArea\n   ", tender.customerAddressArea,
               "\n  name\n   ", tender.name,
               # "\n  customerName\n   ", tender.customerName,
-              # "\n  attachedFile\n   ", tender.attachedFile,
+              "\n  attached_file\n   ", tender.attached_file,
               "\n  payment_term\n   ", tender.payment_term,
               # "\n  customerCompanyName\n   ", tender.customerCompanyName,
               # "\n  customerPhone\n   ", tender.customerPhone,
