@@ -170,7 +170,7 @@ def parse_tender_lot(browser, current_tender, list_of_tenders):
                 if "МФО" in list_of_requisites[i]:
                     temp_for_mfo = list_of_requisites[i + 1]
                 if "Хисоб ракам" in list_of_requisites[i]:
-                    current_tender.bank_account = list_of_requisites[i + 1]
+                    current_tender.bank_account = list_of_requisites[i + 1].replace(' ', '')
 
     content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
     if "Скачать прикрепленный файл" in content:
