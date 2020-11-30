@@ -1,31 +1,27 @@
-from selenium.common.exceptions import StaleElementReferenceException, WebDriverException, NoSuchElementException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 import lot
 
 
-def toCutString(text, length=255):
+def to_cut_string(text, length=255):
     for i in range(length-5, 0, -1):
         if text[i] == '.' or text[i] == ';':
             text = text[0:i+1]+'..'
             return text
 
 
-def openAndParsePage(browser, link, list_of_tenders):
+def open_and_parse_page(browser, link, list_of_tenders):
     browser.get(link)
-    tempForLinkText = link
+    temp_for_link_text = link
     # getting number of pages
-    numberOfTenders = int(browser.find_element_by_xpath("//*[@id='results']/div/div[@class='row']/div[@class='col-md-6']/h4/strong/span[@class='badge badge-secondary']").text.replace(' ',''))
-    numberOfTendersOnPage = len(browser.find_elements_by_xpath("/html/body/main/div[3]/div/div[@class='col-lg-12']/div"))
-    numberOfPages = numberOfTenders // numberOfTendersOnPage
-    if numberOfTenders % numberOfTendersOnPage > 0:
-        numberOfPages += 1
+    number_of_tenders = int(browser.find_element_by_xpath("//*[@id='results']/div/div[@class='row']/div[@class='col-md-6']/h4/strong/span[@class='badge badge-secondary']").text.replace(' ',''))
+    number_of_tenders_on_page = len(browser.find_elements_by_xpath("/html/body/main/div[3]/div/div[@class='col-lg-12']/div"))
+    number_of_pages = number_of_tenders // number_of_tenders_on_page
+    if number_of_tenders % number_of_tenders_on_page > 0:
+        number_of_pages += 1
     # parsing from each page
-    for i in range(numberOfPages):
-        parseTendersFromPage(browser, list_of_tenders, tempForLinkText)
-        if i + 1 != numberOfPages:
+    for i in range(number_of_pages):
+        parse_tenders_from_page(browser, list_of_tenders, temp_for_link_text)
+        if i + 1 != number_of_pages:
             try:
                 link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
                 # print(link)
@@ -48,11 +44,11 @@ def openAndParsePage(browser, link, list_of_tenders):
         tender.email = subject_email
         tender.subject = subject_name
         if not tender.is_sublot:
-            parseTenderLot(browser, tender, list_of_tenders)
-    printLots(list_of_tenders)
+            parse_tender_lot(browser, tender, list_of_tenders)
+    print_lots(list_of_tenders)
 
 
-def parseTendersFromPage(browser, list_of_tenders, tempForLinkText):
+def parse_tenders_from_page(browser, list_of_tenders, tempForLinkText):
     # making all elements visible
     invisible_divs = browser.find_elements_by_xpath("//div[@class='strip_list wow fadeIn']")
     for div in invisible_divs:
@@ -108,50 +104,50 @@ def parseTendersFromPage(browser, list_of_tenders, tempForLinkText):
 #     subject_email = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/a").text
 
 
-def parseTenderLot(browser, currentTender, list_of_tenders):
-    browser.get(currentTender.source_url)
+def parse_tender_lot(browser, current_tender, list_of_tenders):
+    browser.get(current_tender.source_url)
 
     try:
-        currentTender.delivery_term = browser.find_element_by_xpath(
+        current_tender.delivery_term = browser.find_element_by_xpath(
             "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'поставки')]/following::div[1]/div[@class='col-lg-12']/*").text
-        if len(currentTender.delivery_term) >= 255:
-            currentTender.delivery_term = toCutString(currentTender.delivery_term)
+        if len(current_tender.delivery_term) >= 255:
+            current_tender.delivery_term = to_cut_string(current_tender.delivery_term)
     except NoSuchElementException:
-        currentTender.delivery_term = None
-    currentTender.delivery_conditions = currentTender.delivery_term
+        current_tender.delivery_term = None
+    current_tender.delivery_conditions = current_tender.delivery_term
 
     try:
         temp_for_payment_term = browser.find_elements_by_xpath(
             "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'оплаты')]/following::div[1]/div[@class='col-lg-12']/*")
         for temp in temp_for_payment_term:
             if temp.text != "":
-                currentTender.payment_term = temp.text
+                current_tender.payment_term = temp.text
                 break
         temp_for_payment_term.clear()
-        if len(currentTender.payment_term) >= 255:
-            currentTender.payment_term = toCutString(currentTender.payment_term)
+        if len(current_tender.payment_term) >= 255:
+            current_tender.payment_term = to_cut_string(current_tender.payment_term)
     except NoSuchElementException:
-        currentTender.payment_term = None
+        current_tender.payment_term = None
 
     try:
-        currentTender.phone2 = browser.find_element_by_xpath(
+        current_tender.phone2 = browser.find_element_by_xpath(
             "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Контакты')]/following::div[1]/div[@class='col-lg-12']/*/*[contains(text(),'Тел')]/following::*[1]").text
     except NoSuchElementException:
-        currentTender.phone2 = None
+        current_tender.phone2 = None
 
     try:
-        currentTender.email2 = browser.find_element_by_xpath(
+        current_tender.email2 = browser.find_element_by_xpath(
             "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Контакты')]/following::div[1]/div[@class='col-lg-12']/*/*[contains(text(),'mail')]/following::*[1]").text
     except NoSuchElementException:
-        currentTender.email2 = None
+        current_tender.email2 = None
 
     try:
-        currentTender.purchase_conditions = browser.find_element_by_xpath(
+        current_tender.purchase_conditions = browser.find_element_by_xpath(
             "//div[@class='box_general_2']/p[@class='text-center']").text
-        if len(currentTender.purchase_conditions) >= 255:
-            currentTender.purchase_conditions = toCutString(currentTender.purchase_conditions)
+        if len(current_tender.purchase_conditions) >= 255:
+            current_tender.purchase_conditions = to_cut_string(current_tender.purchase_conditions)
     except NoSuchElementException:
-        currentTender.purchase_conditions = None
+        current_tender.purchase_conditions = None
 
     # получение реквизитов (временные переменные)
     try:
@@ -160,10 +156,8 @@ def parseTenderLot(browser, currentTender, list_of_tenders):
     except NoSuchElementException:
         requisites = None
     temp_for_company_name = None
-    temp_for_tin = None
     temp_for_bank = None
     temp_for_mfo = None
-    temp_for_hisob_raqam = None
     if requisites is not None:
         list_of_requisites = requisites.replace("\n", ":").replace(": ", ":").split(":")
         for i in range(len(list_of_requisites)):
@@ -171,27 +165,25 @@ def parseTenderLot(browser, currentTender, list_of_tenders):
                 if "Реквизитлар" in list_of_requisites[i]:
                     temp_for_company_name = list_of_requisites[i + 1]
                 if "ИНН" in list_of_requisites[i]:
-                    temp_for_tin = list_of_requisites[i + 1]
+                    current_tender.itin = list_of_requisites[i + 1]
                     temp_for_bank = list_of_requisites[i + 2]
                 if "МФО" in list_of_requisites[i]:
                     temp_for_mfo = list_of_requisites[i + 1]
                 if "Хисоб ракам" in list_of_requisites[i]:
-                    temp_for_hisob_raqam = list_of_requisites[i + 1]
+                    current_tender.bank_account = list_of_requisites[i + 1]
 
     content = browser.page_source  # или "//*[contains(text(),'Скачать прикрепленный файл')]"
     if "Скачать прикрепленный файл" in content:
-        currentTender.attached_file = browser.find_element_by_xpath(
+        current_tender.attached_file = browser.find_element_by_xpath(
             "//div[@class='row add_bottom_45']/div[@class='col-lg-12']/center/a").get_attribute('href')
     else:
-        currentTender.attached_file = None
+        current_tender.attached_file = None
 
 
-
-
-def printLots(listOfTenders):
-    tempCountForPrint = 1
-    for tender in listOfTenders:
-        print("#", tempCountForPrint,
+def print_lots(list_of_tenders):
+    temp_count_for_print = 1
+    for tender in list_of_tenders:
+        print("#", temp_count_for_print,
               "\n  number\n   ", tender.number,
               "\n  type\n   ", tender.type,
               "\n  category\n   ", tender.category,
@@ -216,4 +208,4 @@ def printLots(listOfTenders):
               "\n  email\n   ", tender.email,
               "\n  subject\n   ", tender.subject,
               "\n ============================\n")
-        tempCountForPrint += 1
+        temp_count_for_print += 1
