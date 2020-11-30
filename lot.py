@@ -2,8 +2,8 @@ from datetime import datetime
 
 
 class Lot:
-    def __init__(self, id=None, name=None, description_short=None, description_long=None, parent_id=None, parent=None,
-                 country=None, country_id=220, region=None, region_id=None, area=None, area_id=None, subject=None,
+    def __init__(self, name=None, description_short=None, description_long=None, parent_id=None, parent=None,
+                 country=None, country_id=220, region=None, region_id=10, area=None, area_id=125, subject=None,
                  subject_id=None, category=None, category_id=None, source_id=None, currency=None,
                  currency_id=None, winner=None, winner_id=None, type=None, number=None, source_url=None, quantity=None,
                  measure=None, price=None, price_lowest=None, participants=None, advance_amount=None,
@@ -13,7 +13,6 @@ class Lot:
                  delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
                  updated_at=datetime.now(), email=None, email2=None, phone=None, phone2=None, is_sublot=False,
                  attached_file=None, subject_address=None, itin=None, bank_account=None):
-        self.id = id
         self.name = name  # название / purchase name
         self.description_short = description_short
         self.description_long = description_long
