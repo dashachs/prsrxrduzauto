@@ -13,7 +13,7 @@ def toCutString(text, length=255):
             return text
 
 
-def openAndParsePage(browser, link, listOfTenders):
+def openAndParsePage(browser, link, list_of_tenders):
     browser.get(link)
     tempForLinkText = link
     # getting number of pages
@@ -24,7 +24,7 @@ def openAndParsePage(browser, link, listOfTenders):
         numberOfPages += 1
     # parsing from each page
     for i in range(numberOfPages):
-        parseTendersFromPage(browser, listOfTenders, tempForLinkText)
+        parseTendersFromPage(browser, list_of_tenders, tempForLinkText)
         if i + 1 != numberOfPages:
             try:
                 link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
@@ -34,12 +34,25 @@ def openAndParsePage(browser, link, listOfTenders):
                 print("\n===  NoSuchElementException  ===")
             finally:
                 continue
-    for tender in listOfTenders:
-        parseTenderLot(browser, tender)
-    printLots(listOfTenders)
+
+    link1 = "https://xarid.uzautomotors.com/public/corp"
+    browser.get(link1)
+    subject_name = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/h5").text
+    subject_phone = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p/a").text
+    subject_address = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p[2]").text.replace('Местонахождение', '').replace(': ', '').replace(':', '')
+    subject_email = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/a").text
+
+    for tender in list_of_tenders:
+        tender.phone = subject_phone
+        tender.subject_address = subject_address
+        tender.email = subject_email
+        tender.subject = subject_name
+        if not tender.is_sublot:
+            parseTenderLot(browser, tender, list_of_tenders)
+    printLots(list_of_tenders)
 
 
-def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
+def parseTendersFromPage(browser, list_of_tenders, tempForLinkText):
     # making all elements visible
     invisible_divs = browser.find_elements_by_xpath("//div[@class='strip_list wow fadeIn']")
     for div in invisible_divs:
@@ -67,15 +80,15 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
 
     # putting info in list
     for i in range(len(list_for_lot_numbers)):
-        size = len(listOfTenders)
-        listOfTenders.append(lot.Lot())
-        listOfTenders[size].number = list_for_lot_numbers[i]
-        listOfTenders[size].source_url = (tempForLinkText + "/") + list_for_lot_numbers[i]
-        listOfTenders[size].name = list_for_names[i]
-        listOfTenders[size].started_at = list_for_started_at[i][0:19]
-        listOfTenders[size].ended_at = list_for_ended_at[i][0:19]
-        listOfTenders[size].category = list_for_categories[i]
-        listOfTenders[size].type = 'tender'
+        size = len(list_of_tenders)
+        list_of_tenders.append(lot.Lot())
+        list_of_tenders[size].number = list_for_lot_numbers[i]
+        list_of_tenders[size].source_url = (tempForLinkText + "/") + list_for_lot_numbers[i]
+        list_of_tenders[size].name = list_for_names[i]
+        list_of_tenders[size].started_at = list_for_started_at[i][0:19]
+        list_of_tenders[size].ended_at = list_for_ended_at[i][0:19]
+        list_of_tenders[size].category = list_for_categories[i]
+        list_of_tenders[size].type = 'tender'
 
     # clear lists
     list_for_lot_numbers.clear()
@@ -85,7 +98,17 @@ def parseTendersFromPage(browser, listOfTenders, tempForLinkText):
     list_for_ended_at.clear()
 
 
-def parseTenderLot(browser, currentTender):
+# def get_general_info(browser, list_of_tenders):
+#     link1 = "https://xarid.uzautomotors.com/public/corp"
+#     browser.get(link1)
+#     subject_name = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/h5").text
+#     subject_phone = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p/a").text
+#     subject_address = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p[2]").text
+#     subject_address = subject_address.replace('Местонахождение', '').replace(': ', '').replace(':', '')
+#     subject_email = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/a").text
+
+
+def parseTenderLot(browser, currentTender, list_of_tenders):
     browser.get(currentTender.source_url)
 
     try:
@@ -111,10 +134,10 @@ def parseTenderLot(browser, currentTender):
         currentTender.payment_term = None
 
     try:
-        currentTender.phone = browser.find_element_by_xpath(
+        currentTender.phone2 = browser.find_element_by_xpath(
             "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Контакты')]/following::div[1]/div[@class='col-lg-12']/*/*[contains(text(),'Тел')]/following::*[1]").text
     except NoSuchElementException:
-        currentTender.phone = None
+        currentTender.phone2 = None
 
     try:
         currentTender.email2 = browser.find_element_by_xpath(
@@ -187,6 +210,10 @@ def printLots(listOfTenders):
               "\n  purchase_conditions\n   ", tender.purchase_conditions,
               "\n  delivery_term\n   ", tender.delivery_term,
               "\n  email2\n   ", tender.email2,
+              "\n  phone2\n   ", tender.phone2,
               "\n  phone\n   ", tender.phone,
+              "\n  subject_address\n   ", tender.subject_address,
+              "\n  email\n   ", tender.email,
+              "\n  subject\n   ", tender.subject,
               "\n ============================\n")
         tempCountForPrint += 1
