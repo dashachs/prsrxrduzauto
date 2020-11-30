@@ -90,16 +90,19 @@ def add_subject(con, name, lot):
         "updated_at, country_id, responsible_person, phone2) "
         "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s)",
         (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2))
+    return new_id
 
 
-def get_subject_id(con, required):
+def get_subject_id(con, required, lot):
     cur = con.cursor()
     cur.execute("SELECT id name FROM bidding_subjects")
     rows = cur.fetchall()
     for row in rows:
         if row[1].lower.replace(' ', '') == required.lower().replace(' ', ''):
             return row[0]
-    print("subject was not found:", required)  # надо дописать действия при отсутсвии информации
+    print("subject was not found:", required)
+    subject_id = add_subject(con, required, lot)
+    return subject_id
 
 
 def getRegionId(con, required):
@@ -143,6 +146,7 @@ def get_for_this_lot(con, currentLot):
     currentLot.category_id = get_category_id(con, currentLot.category)
     currentLot.area_id = get_area_id(con, currentLot.area)
     currentLot.source_id = get_source_id(con, currentLot.source_url)
+    currentLot.subject_id = get_subject_id(con, currentLot.subject, currentLot)
 
 
 def get_for_everything(con, listOfLots):  # название временное
