@@ -10,15 +10,16 @@ def transliterate(name):
     return name
 
 
-def in_table(con, lotNumber):
+def in_table(con, lotNumber, lotLink):
     # Проверяем на наличие лота в таблице
     cur = con.cursor()
-    cur.execute("SELECT number FROM bidding_lots")
+    cur.execute("SELECT number, source_url FROM bidding_lots")
     rows = cur.fetchall()
     for row in rows:
-        if int(lotNumber) == row[0]:
+        if int(lotNumber) == row[0] and lotLink == row[1]:
             rows.clear()
             return True
+    rows.clear()
     return False
 
 
@@ -202,3 +203,7 @@ def save_lot_in_biddinng_lots_translations(con, lot):
                     new_id + 1, lot_id, lot.name, lot.purchase_conditions, lot.delivery_conditions, lot.delivery_time,
                     'uzb', lot.delivery_address))
     con.commit()
+
+
+def save_lot(con, lot):
+    save_lot_in_biddinng_lots_translations(con, lot)
