@@ -80,6 +80,18 @@ def get_source_id(con, required):
     print("Source was not found:", required)
 
 
+def add_subject(con, name, lot):
+    cur = con.cursor()
+    cur.execute("SELECT id FROM bidding_subjects")
+    rows = cur.fetchall()
+    new_id = rows[-1][0] + 1
+    cur.execute(
+        "INSERT INTO bidding_subjects(id, name, itin, address, phone, bank_account, website, image, created_at, "
+        "updated_at, country_id, responsible_person, phone2) "
+        "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s)",
+        (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2))
+
+
 def get_subject_id(con, required):
     cur = con.cursor()
     cur.execute("SELECT id name FROM bidding_subjects")
@@ -88,30 +100,6 @@ def get_subject_id(con, required):
         if row[1].lower.replace(' ', '') == required.lower().replace(' ', ''):
             return row[0]
     print("subject was not found:", required)  # надо дописать действия при отсутсвии информации
-
-
-def getCurrencyId(con, required):
-    cur = con.cursor()
-    cur.execute("SELECT id, slug FROM finance_currencies")
-    rows = cur.fetchall()
-    for row in rows:
-        if row[1].upper().replace(' ', '') == required.upper().replace(' ', ''):
-            # print("getCurrencyId done successfully", required, "ID =", row[0])
-            return row[0]
-    print("  Currency was not found:", required)
-    # cur.execute("SET TIMEZONE=5")
-    # cur.execute("INSERT INTO finance_currencies(id, slug, created_at, updated_at) VALUES (%s, %s, now(), now())",
-    #             (rows[-1][0] + 1,
-    #              required))
-    # con.commit()
-    print("  Currency was added to Database successfully")
-    # print("Please, add description manually")
-    rows.clear()
-    return -1
-    # return rows[-1][0] + 1
-
-
-# def get_country_id(con, required):
 
 
 def getRegionId(con, required):
@@ -152,8 +140,9 @@ def get_area_id(con, required):
 
 
 def get_for_this_lot(con, currentLot):
-    currentLot.categoryID = get_category_id(con, currentLot.category)
-    currentLot.customerAddressAreaID = get_area_id(con, currentLot.customerAddressArea)
+    currentLot.category_id = get_category_id(con, currentLot.category)
+    currentLot.area_id = get_area_id(con, currentLot.area)
+    currentLot.source_id = get_source_id(con, currentLot.source_url)
 
 
 def get_for_everything(con, listOfLots):  # название временное
@@ -164,7 +153,7 @@ def get_for_everything(con, listOfLots):  # название временное
           "Adding to Database...")
 
 
-def save_lot(con, lot):
+def save_lot_in_bidding_lots(con, lot):
     cur = con.cursor()
     cur.execute(
         "INSERT INTO xarid_uzauto_test(lot_number, type, category_id, source_url, started_at, ended_at, status, "

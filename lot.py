@@ -12,7 +12,7 @@ class Lot:
                  purchase_conditions=None, delivery_address=None, delivery_conditions=None, delivery_time=None,
                  delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
                  updated_at=datetime.now(), email=None, email2=None, phone=None, phone2=None, is_sublot=False,
-                 attached_file=None, subject_address=None):
+                 attached_file=None, subject_address=None, itin=None, bank_account=None, ):
         self.id = id
         self.name = name  # название / purchase name
         self.description_short = description_short
@@ -69,4 +69,5 @@ class Lot:
         self.is_sublot = is_sublot
         self.attached_file = attached_file
         self.subject_address = subject_address
-
+        self.itin = itin
+        self.bank_account = bank_account
