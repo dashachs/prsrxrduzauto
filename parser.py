@@ -16,14 +16,14 @@ def executeParserOrders():
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
     # create lot's object
-    listOfLots = []
+    list_of_lots = []
 
     # start chrome browser
     browser = webdriver.Chrome('chromedriver.exe', options=options)
 
     # open tenders page and parse tenders
     link = 'https://xarid.uzautomotors.com/public/order'
-    func.openAndParsePage(browser, link, listOfLots)
+    func.openAndParsePage(browser, link, list_of_lots)
 
     print("Parsed successfully")
     # close browser
@@ -45,10 +45,10 @@ def executeParserOrders():
     #         print("Database was opened successfully")
     #         break
     #
-    # db.get_for_everything(con, listOfLots)
+    # db.get_for_everything(con, list_of_lots)
     #
     # # adding to DB
-    # for lot in listOfLots:
+    # for lot in list_of_lots:
     #     if not db.in_table(con, lot.lotID):
     #         db.save_lot(con, lot)
     #
@@ -61,7 +61,7 @@ def executeParserOrders():
     # con.close()
 
     # clear list of lots
-    listOfLots.clear()
+    list_of_lots.clear()
 
 
 while True:

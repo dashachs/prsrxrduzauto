@@ -12,8 +12,7 @@ class Lot:
                  purchase_conditions=None, delivery_address=None, delivery_conditions=None, delivery_time=None,
                  delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
                  updated_at=datetime.now(), email=None, email2=None, phone=None, phone2=None, is_sublot=False,
-                 attached_file=None,
-                 subject_address=None):
+                 attached_file=None, subject_address=None):
         self.id = id
         self.name = name  # название / purchase name
         self.description_short = description_short
