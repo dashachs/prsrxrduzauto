@@ -121,7 +121,7 @@ def getRegionId(con, required):
     cur = con.cursor()
     cur.execute("SELECT region_id, name FROM geo_regions_translations")
     rows = cur.fetchall()
-    if required == '' or required == '-' or required == None:
+    if required == '' or required == '-' or required is None:
         required = 'Не указан'
     for row in rows:
         if row[1].lower().replace(' ', '') == required.replace('город', '').lower().replace(' ', ''):
