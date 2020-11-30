@@ -62,9 +62,9 @@ def get_category_id(con, required):
     print("Category was not found:", required)
     category_id = add_category(con, required)
     cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
-                (rows[-1][2] + 1, category_id, required, 'rus'))
+                (rows[-1][2] + 1, category_id, required.lower().capitalize(), 'rus'))
     cur.execute("INSERT INTO bidding_categories_translations(id, category_id, name, locale) VALUES (%s, %s, %s, %s)",
-                (rows[-1][2] + 2, category_id, required, 'uzb'))
+                (rows[-1][2] + 2, category_id, required.lower().capitalize(), 'uzb'))
     con.commit()
     rows.clear()
     return category_id
@@ -96,17 +96,17 @@ def add_subject(con, name, lot):
 
 def get_subject_id(con, required, lot):
     cur = con.cursor()
-    cur.execute("SELECT id name FROM bidding_subjects")
+    cur.execute("SELECT id, name FROM bidding_subjects")
     rows = cur.fetchall()
     for row in rows:
-        if row[1].lower.replace(' ', '') == required.lower().replace(' ', ''):
+        if row[1].lower().replace(' ', '') == required.lower().replace(' ', ''):
             return row[0]
     print("subject was not found:", required)
     subject_id = add_subject(con, required, lot)
     return subject_id
 
 
-def getRegionId(con, required):
+def get_region_id(con, required):
     # регионов узбекистана всего 15 (судя по таблице)
     # и добавление новых не в нашей юрисдикции
     # но если другая страна, нужно будет добавить функцию
@@ -117,7 +117,7 @@ def getRegionId(con, required):
         required = 'Не указан'
     for row in rows:
         if row[1].lower().replace(' ', '') == required.replace('город', '').lower().replace(' ', ''):
-            # print("getRegionId done successfully")
+            # print("get_region_id done successfully")
             return row[0]
     print("  Region was not found:", required)
     rows.clear()
@@ -145,7 +145,6 @@ def get_area_id(con, required):
 
 def get_for_this_lot(con, currentLot):
     currentLot.category_id = get_category_id(con, currentLot.category)
-    currentLot.area_id = get_area_id(con, currentLot.area)
     currentLot.source_id = get_source_id(con, currentLot.source_url)
     currentLot.subject_id = get_subject_id(con, currentLot.subject, currentLot)
 
@@ -160,7 +159,7 @@ def get_for_everything(con, listOfLots):  # название временное
 
 def get_id_from_bidding_lots(con):
     cur = con.cursor()
-    cur.execute("SELECT id FROM bidding_lots")
+    cur.execute("SELECT id FROM bidding_lots ORDER BY id")
     rows = cur.fetchall()
     return rows[-1][0] + 1
 
@@ -168,15 +167,16 @@ def get_id_from_bidding_lots(con):
 def save_lot_in_bidding_lots(con, lot):
     cur = con.cursor()
     new_id = get_id_from_bidding_lots(con)
-    cur.execute(
-        "INSERT INTO bidding_lots(id, type, number, category_id, source_url, advance_amount, advance_payment_days, "
-        "remains_payment_days, deposit_amount, started_at, ended_at, status, is_visible, is_approved, created_at, "
-        "updated_at, subject_id, winner_id, source_id, country_id, region_id, area_id, price, currency_id, parent_id,"
-        "closed_at, views, transaction_number, transaction_sum, price_lowest, participants, quantity) "
-        "VALUES (%s, %s, %s, %s, %s, null, null, null, null, %s, %s, %s, true, true, now(), now(), %s, null, %s, %s, "
-        "%s, %s, null, null, null, null, 0, null, null, null, null, null)", (
-            new_id, lot.type, lot.number, lot.category_id, lot.source_url, lot.started_at, lot.ended_at, lot.status,
-            lot.subject_id, lot.source_id, lot.country_id, lot.region_id, lot.area_id))
+    cur.execute("INSERT INTO bidding_lots(id, type, number, category_id, source_url, advance_amount, "
+                "advance_payment_days, "
+                "remains_payment_days, deposit_amount, started_at, ended_at, status, is_visible, is_approved, created_at, "
+                "updated_at, subject_id, winner_id, source_id, country_id, region_id, area_id, price, currency_id, parent_id,"
+                "closed_at, views, transaction_number, transaction_sum, price_lowest, participants, quantity) "
+                "VALUES (%s, %s, %s, %s, %s, null, null, null, null, %s, %s, %s, true, true, now(), now(), %s, null, "
+                "%s, %s, "
+                "%s, %s, null, null, null, null, 0, null, null, null, null, null)", (
+                    new_id, lot.type, lot.number, lot.category_id, lot.source_url, lot.started_at, lot.ended_at,
+                    lot.status, lot.subject_id, lot.source_id, lot.country_id, lot.region_id, lot.area_id))
     con.commit()
     return new_id
 
@@ -188,7 +188,7 @@ def get_id_from_bidding_lots_translations(con):
     return rows[-1][0] + 1
 
 
-def save_lot_in_biddinng_lots_translations(con, lot):
+def save_lot_in_bidding_lots_translations(con, lot):
     lot_id = save_lot_in_bidding_lots(con, lot)
     new_id = get_id_from_bidding_lots_translations(con)
     cur = con.cursor()
@@ -206,4 +206,4 @@ def save_lot_in_biddinng_lots_translations(con, lot):
 
 
 def save_lot(con, lot):
-    save_lot_in_biddinng_lots_translations(con, lot)
+    save_lot_in_bidding_lots_translations(con, lot)
