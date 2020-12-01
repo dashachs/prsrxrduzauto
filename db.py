@@ -16,7 +16,7 @@ def in_table(con, lotNumber, lotLink):
     cur.execute("SELECT number, source_url FROM bidding_lots")
     rows = cur.fetchall()
     for row in rows:
-        if int(lotNumber) == row[0] and lotLink == row[1]:
+        if str(lotNumber) == str(row[0]) and str(lotLink) == str(row[1]):
             rows.clear()
             return True
     rows.clear()
@@ -183,7 +183,7 @@ def save_lot_in_bidding_lots(con, lot):
 
 def get_id_from_bidding_lots_translations(con):
     cur = con.cursor()
-    cur.execute("SELECT id FROM bidding_lots_translations")
+    cur.execute("SELECT id FROM bidding_lots_translations ORDER BY id")
     rows = cur.fetchall()
     return rows[-1][0] + 1
 
@@ -202,6 +202,8 @@ def save_lot_in_bidding_lots_translations(con, lot):
                 "VALUES (%s, %s, %s, null, null, %s, %s, %s, %s, %s, null)", (
                     new_id + 1, lot_id, lot.name, lot.purchase_conditions, lot.delivery_conditions, lot.delivery_time,
                     'uzb', lot.delivery_address))
+
+    print("id: {}; lot_id: {}".format(new_id, lot_id))
     con.commit()
 
 

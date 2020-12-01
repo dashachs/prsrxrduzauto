@@ -45,15 +45,15 @@ def execute_parser_orders():
             print("Database was opened successfully")
             break
 
-    # db.get_for_everything(con, list_of_lots)
+    db.get_for_everything(con, list_of_lots)
 
-    # # adding to DB
-    # for lot in list_of_lots:
-    #     if not db.in_table(con, lot.number, lot.source_url):
-    #         db.save_lot(con, lot)
-    #
-    # # find expired lots
-    # db.find_expired_lots(con)
+    # adding to DB
+    for lot in list_of_lots:
+        if not db.in_table(con, lot.number, lot.source_url):
+            db.save_lot(con, lot)
+
+    # find expired lots
+    db.find_expired_lots(con)
 
 
 
