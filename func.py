@@ -94,16 +94,6 @@ def parse_tenders_from_page(browser, list_of_tenders, tempForLinkText):
     list_for_ended_at.clear()
 
 
-# def get_general_info(browser, list_of_tenders):
-#     link1 = "https://xarid.uzautomotors.com/public/corp"
-#     browser.get(link1)
-#     subject_name = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/h5").text
-#     subject_phone = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p/a").text
-#     subject_address = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p[2]").text
-#     subject_address = subject_address.replace('Местонахождение', '').replace(': ', '').replace(':', '')
-#     subject_email = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/a").text
-
-
 def parse_tender_lot(browser, current_tender, list_of_tenders):
     browser.get(current_tender.source_url)
 
@@ -180,32 +170,32 @@ def parse_tender_lot(browser, current_tender, list_of_tenders):
         current_tender.attached_file = None
 
 
-def print_lots(list_of_tenders):
-    temp_count_for_print = 1
-    for tender in list_of_tenders:
-        print("#", temp_count_for_print,
-              "\n  number\n   ", tender.number,
-              "\n  type\n   ", tender.type,
-              "\n  category\n   ", tender.category,
-              "\n  source_url\n   ", tender.source_url,
-              "\n  started_at\n   ", tender.started_at,
-              "\n  ended_at\n   ", tender.ended_at,
-              # "\n  status\n   ", tender.status,
-              # "\n  customerAddressArea\n   ", tender.customerAddressArea,
-              "\n  name\n   ", tender.name,
-              # "\n  customerName\n   ", tender.customerName,
-              "\n  attached_file\n   ", tender.attached_file,
-              "\n  payment_term\n   ", tender.payment_term,
-              # "\n  customerCompanyName\n   ", tender.customerCompanyName,
-              # "\n  customerPhone\n   ", tender.customerPhone,
-              # "\n  customerEmail\n   ", tender.customerEmail,
-              "\n  purchase_conditions\n   ", tender.purchase_conditions,
-              "\n  delivery_term\n   ", tender.delivery_term,
-              "\n  email2\n   ", tender.email2,
-              "\n  phone2\n   ", tender.phone2,
-              "\n  phone\n   ", tender.phone,
-              "\n  subject_address\n   ", tender.subject_address,
-              "\n  email\n   ", tender.email,
-              "\n  subject\n   ", tender.subject,
-              "\n ============================\n")
-        temp_count_for_print += 1
+# def print_lots(list_of_tenders):
+#     temp_count_for_print = 1
+#     for tender in list_of_tenders:
+#         print("#", temp_count_for_print,
+#               "\n  number\n   ", tender.number,
+#               "\n  type\n   ", tender.type,
+#               "\n  category\n   ", tender.category,
+#               "\n  source_url\n   ", tender.source_url,
+#               "\n  started_at\n   ", tender.started_at,
+#               "\n  ended_at\n   ", tender.ended_at,
+#               # "\n  status\n   ", tender.status,
+#               # "\n  customerAddressArea\n   ", tender.customerAddressArea,
+#               "\n  name\n   ", tender.name,
+#               # "\n  customerName\n   ", tender.customerName,
+#               "\n  attached_file\n   ", tender.attached_file,
+#               "\n  payment_term\n   ", tender.payment_term,
+#               # "\n  customerCompanyName\n   ", tender.customerCompanyName,
+#               # "\n  customerPhone\n   ", tender.customerPhone,
+#               # "\n  customerEmail\n   ", tender.customerEmail,
+#               "\n  purchase_conditions\n   ", tender.purchase_conditions,
+#               "\n  delivery_term\n   ", tender.delivery_term,
+#               "\n  email2\n   ", tender.email2,
+#               "\n  phone2\n   ", tender.phone2,
+#               "\n  phone\n   ", tender.phone,
+#               "\n  subject_address\n   ", tender.subject_address,
+#               "\n  email\n   ", tender.email,
+#               "\n  subject\n   ", tender.subject,
+#               "\n ============================\n")
+#         temp_count_for_print += 1
