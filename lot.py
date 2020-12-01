@@ -8,7 +8,7 @@ class Lot:
                  currency_id=None, winner=None, winner_id=None, type=None, number=None, source_url=None, quantity=None,
                  measure=None, price=None, price_lowest=None, participants=None, advance_amount=None,
                  advance_payment_days=None, remains_payment_days=None, deposit_amount=None, payment_term=None,
-                 started_at=None, closed_at=None, ended_at=None, status=None, is_visible=None, is_approved=None,
+                 started_at=None, closed_at=None, ended_at=None, status='relevant', is_visible=None, is_approved=None,
                  purchase_conditions=None, delivery_address=None, delivery_conditions=None, delivery_time=None,
                  delivery_term=None, transaction_number=None, transaction_sum=None, created_at=datetime.now(),
                  updated_at=datetime.now(), email=None, email2=None, phone=None, phone2=None, is_sublot=False,
