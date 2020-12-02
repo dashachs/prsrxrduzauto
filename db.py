@@ -195,14 +195,14 @@ def save_lot_in_bidding_lots_translations(con, lot):
     cur = con.cursor()
     cur.execute("INSERT INTO bidding_lots_translations(id, lot_id, name, description_short, description_long, "
                 "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
-                "VALUES (%s, %s, %s, null, null, %s, %s, %s, %s, %s, null)", (
-                    new_id, lot_id, lot.name, lot.purchase_conditions, lot.delivery_conditions, lot.delivery_time,
-                    'rus', lot.delivery_address))
+                "VALUES (%s, %s, %s, %s, null, %s, %s, %s, %s, %s, null)", (
+                    new_id, lot_id, lot.name, lot.short_description, lot.purchase_conditions, lot.delivery_conditions,
+                    lot.delivery_time, 'rus', lot.delivery_address))
     cur.execute("INSERT INTO bidding_lots_translations(id, lot_id, name, description_short, description_long, "
                 "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
-                "VALUES (%s, %s, %s, null, null, %s, %s, %s, %s, %s, null)", (
-                    new_id + 1, lot_id, lot.name, lot.purchase_conditions, lot.delivery_conditions, lot.delivery_time,
-                    'uzb', lot.delivery_address))
+                "VALUES (%s, %s, %s, %s, null, %s, %s, %s, %s, %s, null)", (
+                    new_id + 1, lot_id, lot.name, lot.short_description, lot.purchase_conditions, lot.delivery_conditions,
+                    lot.delivery_time, 'uzb', lot.delivery_address))
 
     print("id: {}; lot_id: {}".format(new_id, lot_id))
     con.commit()
