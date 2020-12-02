@@ -88,9 +88,10 @@ def add_subject(con, name, lot):
     new_id = rows[-1][0] + 1
     cur.execute(
         "INSERT INTO bidding_subjects(id, name, itin, address, phone, bank_account, website, image, created_at, "
-        "updated_at, country_id, responsible_person, phone2) "
-        "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s)",
-        (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2))
+        "updated_at, country_id, responsible_person, phone2, email) "
+        "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s, %s)",
+        (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2, lot.email))
+    con.commit()
     return new_id
 
 
