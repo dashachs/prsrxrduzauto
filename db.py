@@ -104,9 +104,9 @@ def add_subject(con, name, lot):
     cur.execute(
         "INSERT INTO bidding_subjects(id, name, itin, address, phone, bank_account, website, image, created_at, "
         "updated_at, country_id, responsible_person, phone2, email) "
-        "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s, %s)",
-        (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2,
-         lot.email))
+        "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s, %s)", (
+        new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2,
+        lot.email))
     con.commit()
     return new_id
 
@@ -218,8 +218,7 @@ def save_lot_in_bidding_lots_translations(con, lot):
                 "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
                 "VALUES (%s, %s, %s, %s, null, %s, %s, %s, %s, %s, null)", (
                     new_id + 1, lot_id, lot.name, lot.description_short, lot.purchase_conditions,
-                    lot.delivery_conditions,
-                    lot.delivery_time, 'uzb', lot.delivery_address))
+                    lot.delivery_conditions, lot.delivery_time, 'uzb', lot.delivery_address))
 
     print("id: {}; lot_id: {}".format(new_id, lot_id))
     con.commit()
