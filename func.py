@@ -114,7 +114,7 @@ def create_sublot(row_number, row, current_tender, list_of_tenders):
     list_of_tenders.append(lot.Lot())
     list_of_tenders[number] = copy.deepcopy(current_tender)
     list_of_tenders[number].is_sublot = True
-    list_of_tenders[number].short_description = row
+    list_of_tenders[number].description_short = row
     list_of_tenders[number].number = current_tender.number + "_" + str(row_number)
     print("  ", list_of_tenders[number].number)
 
@@ -135,11 +135,58 @@ def get_sublots_from_table(temp_rows, current_tender, list_of_tenders):
         # formatting text and deleting number
         row = row.text.replace('\n', ' ').replace(str(count + 1) + " ", '')
         if count == 0:
-            current_tender.short_description = row
+            current_tender.description_short = row
         else:
             create_sublot(count, row, current_tender, list_of_tenders)
         print(row)
         count += 1
+
+
+def get_description(browser, current_tender, list_of_tenders):
+    print("  ", current_tender.source_url)
+    try:
+        # checking if there's table
+        table = browser.find_element_by_xpath(
+            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody")
+        print("table")
+        # checking if this table has sublots and not just info
+        try:
+            first_col = browser.find_element_by_xpath(
+                "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody/tr[1]/td[1]").text
+            if "№" not in first_col and "1" not in first_col:  # if there's no sublots
+                print("no sublots")  # works
+                current_tender.description_short = browser.find_element_by_xpath(
+                    "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody/tr[1]/td[2]").text
+                print(current_tender.description_short)
+            else:
+                print("working with table")
+                temp_rows = browser.find_elements_by_xpath(
+                    "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody/tr")
+                if "№" in temp_rows[0].text:
+                    del temp_rows[0]
+                get_sublots_from_table(temp_rows, current_tender, list_of_tenders)
+        except NoSuchElementException:
+            current_tender.description_short = current_tender.name
+    except NoSuchElementException:
+        print("No table")
+        try:
+            browser.find_element_by_xpath(
+                "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/p[contains(text(),'№')]")
+            print("just text but imitating table")
+            current_tender.description_short = current_tender.name
+        except NoSuchElementException:
+            print("No table at all")
+            try:
+                current_tender.description_short = browser.find_element_by_xpath(
+                    "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/*[text()]").text
+                print(current_tender.description_short)
+            except NoSuchElementException:
+                try:
+                    current_tender.description_short = browser.find_element_by_xpath(
+                        "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/*/*[text()]").text
+                    print(current_tender.description_short)
+                except NoSuchElementException:
+                    print("Not even text")
 
 
 def parse_tender_lot(browser, current_tender, list_of_tenders):
@@ -217,50 +264,7 @@ def parse_tender_lot(browser, current_tender, list_of_tenders):
     else:
         current_tender.attached_file = None
 
-    print("  ", current_tender.source_url)
-    try:
-        # checking if there's table
-        table = browser.find_element_by_xpath(
-            "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody")
-        print("table")
-        # checking if this table has sublots and not just info
-        try:
-            first_col = browser.find_element_by_xpath(
-                "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody/tr[1]/td[1]").text
-            if "№" not in first_col and "1" not in first_col:  # if there's no sublots
-                print("no sublots")  # works
-                current_tender.short_description = browser.find_element_by_xpath(
-                    "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody/tr[1]/td[2]").text
-                print(current_tender.short_description)
-            else:
-                print("working with table")
-                temp_rows = browser.find_elements_by_xpath(
-                    "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/table/tbody/tr")
-                if "№" in temp_rows[0].text:
-                    del temp_rows[0]
-                get_sublots_from_table(temp_rows, current_tender, list_of_tenders)
-        except NoSuchElementException:
-            current_tender.short_description = current_tender.name
-    except NoSuchElementException:
-        print("No table")
-        try:
-            browser.find_element_by_xpath(
-                "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/p[contains(text(),'№')]")
-            print("just text but imitating table")
-            current_tender.short_description = current_tender.name
-        except NoSuchElementException:
-            print("No table at all")
-            try:
-                current_tender.short_description = browser.find_element_by_xpath(
-                    "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/*[text()]").text
-                print(current_tender.short_description)
-            except NoSuchElementException:
-                try:
-                    current_tender.short_description = browser.find_element_by_xpath(
-                        "//div[@class='box_general_2']/div[@class='main_title_4']/h3[contains(text(),'Предмет')]/following::div[1]/div[@class='col-lg-12']/*/*[text()]").text
-                    print(current_tender.short_description)
-                except NoSuchElementException:
-                    print("Not even text")
+    get_description(browser, current_tender, list_of_tenders)
 
     current_tender.name = crop_name(current_tender.name)
 
