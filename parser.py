@@ -66,15 +66,19 @@ def execute_parser_orders():
     del bidding_lots_table
 
 
-# while True:
-#     try:
-execute_parser_orders()  # except TimeoutException:  #     print("TIMEOUT_EXCEPTION")  # except WebDriverException:  #     print("WEB_DRIVER_EXCEPTION")
-# # except:
-# #     print("ERROR")
-# finally:
-#     # setting repeating time
-#     timerTime = 90
-#     print("\n~~~~~~~~~~~~~~~~~~~~~\n"
-#           "Parser will start again in", timerTime, "seconds"
-#           "\n~~~~~~~~~~~~~~~~~~~~~\n")
-#     time.sleep(timerTime)
+while True:
+    try:
+        execute_parser_orders()
+    except TimeoutException:
+        print("TIMEOUT_EXCEPTION")
+    except WebDriverException:
+        print("WEB_DRIVER_EXCEPTION")
+    except:
+        print("ERROR")
+    finally:
+        # setting repeating time
+        timerTime = 90
+        print("\n~~~~~~~~~~~~~~~~~~~~~\n"
+              "Parser will start again in", timerTime, "seconds"
+              "\n~~~~~~~~~~~~~~~~~~~~~\n")
+        time.sleep(timerTime)
