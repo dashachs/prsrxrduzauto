@@ -176,9 +176,9 @@ def get_for_everything(con, listOfLots):  # название временное
 
 def get_id_from_bidding_lots(con):
     cur = con.cursor()
-    cur.execute("SELECT id FROM bidding_lots ORDER BY id")
-    rows = cur.fetchall()
-    return rows[-1][0] + 1
+    cur.execute("SELECT id FROM bidding_lots ORDER BY id DESC LIMIT 1")
+    row = cur.fetchone()
+    return row[0] + 1
 
 
 def save_lot_in_bidding_lots(con, lot):
@@ -200,9 +200,9 @@ def save_lot_in_bidding_lots(con, lot):
 
 def get_id_from_bidding_lots_translations(con):
     cur = con.cursor()
-    cur.execute("SELECT id FROM bidding_lots_translations ORDER BY id")
-    rows = cur.fetchall()
-    return rows[-1][0] + 1
+    cur.execute("SELECT id FROM bidding_lots_translations ORDER BY id DESC LIMIT 1")
+    row = cur.fetchone()
+    return row[0] + 1
 
 
 def save_lot_in_bidding_lots_translations(con, lot):
