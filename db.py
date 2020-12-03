@@ -14,13 +14,15 @@ def clear_bidding_lots_table(bidding_lots_table):
     for i in range(len(bidding_lots_table) - 1, -1, -1):
         if "xarid.uzautomotors.com" not in str(bidding_lots_table[i][1]):
             del bidding_lots_table[i]
+    return bidding_lots_table
 
 
 def get_bidding_lots_table(con, bidding_lots_table):
     cur = con.cursor()
     cur.execute("SELECT number, source_url FROM bidding_lots")
     bidding_lots_table = cur.fetchall()
-    clear_bidding_lots_table(bidding_lots_table)
+    bidding_lots_table = clear_bidding_lots_table(bidding_lots_table)
+    return bidding_lots_table
 
 
 def in_table(con, lotNumber, lotLink, rows):
