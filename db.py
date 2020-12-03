@@ -17,24 +17,26 @@ def clear_bidding_lots_table(bidding_lots_table):
     return bidding_lots_table
 
 
-def get_bidding_lots_table(con, bidding_lots_table):
+def get_bidding_lots_table(con):
     cur = con.cursor()
     cur.execute("SELECT number, source_url FROM bidding_lots")
     bidding_lots_table = cur.fetchall()
-    bidding_lots_table = clear_bidding_lots_table(bidding_lots_table)
-    return bidding_lots_table
+    print("bidding_lots_table = ", len(bidding_lots_table))
+    bidding_lots_table_1 = clear_bidding_lots_table(bidding_lots_table)
+    print("bidding_lots_table_1 = ", len(bidding_lots_table_1))
+    return bidding_lots_table_1
 
 
-def in_table(con, lotNumber, lotLink, rows):
+def in_table(lotNumber, lotLink, rows):
     # Проверяем на наличие лота в таблице
     # cur = con.cursor()
     # cur.execute("SELECT number, source_url FROM bidding_lots")
     # rows = cur.fetchall()
     for row in rows:
         if str(lotNumber) == str(row[0]) and str(lotLink) == str(row[1]):
-            rows.clear()
+            # rows.clear()
             return True
-    rows.clear()
+    # rows.clear()
     return False
 
 
