@@ -5,9 +5,9 @@ import lot
 
 
 def to_cut_string(text, length=255):
-    for i in range(length-5, 0, -1):
+    for i in range(length - 5, 0, -1):
         if text[i] == '.' or text[i] == ';':
-            text = text[0:i+1]+'..'
+            text = text[0:i + 1] + '..'
             return text
 
 
@@ -28,8 +28,11 @@ def open_and_parse_page(browser, link, list_of_tenders):
     browser.get(link)
     temp_for_link_text = link
     # getting number of pages
-    number_of_tenders = int(browser.find_element_by_xpath("//*[@id='results']/div/div[@class='row']/div[@class='col-md-6']/h4/strong/span[@class='badge badge-secondary']").text.replace(' ',''))
-    number_of_tenders_on_page = len(browser.find_elements_by_xpath("/html/body/main/div[3]/div/div[@class='col-lg-12']/div"))
+    number_of_tenders = int(browser.find_element_by_xpath(
+        "//*[@id='results']/div/div[@class='row']/div[@class='col-md-6']/h4/strong/span[@class='badge badge-secondary']").text.replace(
+        ' ', ''))
+    number_of_tenders_on_page = len(
+        browser.find_elements_by_xpath("/html/body/main/div[3]/div/div[@class='col-lg-12']/div"))
     number_of_pages = number_of_tenders // number_of_tenders_on_page
     if number_of_tenders % number_of_tenders_on_page > 0:
         number_of_pages += 1
@@ -38,7 +41,8 @@ def open_and_parse_page(browser, link, list_of_tenders):
         parse_tenders_from_page(browser, list_of_tenders, temp_for_link_text)
         if i + 1 != number_of_pages:
             try:
-                link = browser.find_element_by_xpath("//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
+                link = browser.find_element_by_xpath(
+                    "//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
                 # print(link)
                 browser.get(link)
             except NoSuchElementException:
@@ -50,7 +54,10 @@ def open_and_parse_page(browser, link, list_of_tenders):
     browser.get(link1)
     subject_name = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/h5").text
     subject_phone = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p/a").text
-    subject_address = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/p[2]").text.replace('Местонахождение', '').replace(': ', '').replace(':', '')
+    subject_address = browser.find_element_by_xpath(
+        "//div[@class='box_list wow fadeIn animated']/div/p[2]").text.replace('Местонахождение', '').replace(': ',
+                                                                                                             '').replace(
+        ':', '')
     subject_email = browser.find_element_by_xpath("//div[@class='box_list wow fadeIn animated']/div/a").text
 
     for tender in list_of_tenders:
@@ -59,8 +66,7 @@ def open_and_parse_page(browser, link, list_of_tenders):
         tender.email = subject_email
         tender.subject = subject_name
         if not tender.is_sublot:
-            parse_tender_lot(browser, tender, list_of_tenders)
-    # print_lots(list_of_tenders)
+            parse_tender_lot(browser, tender, list_of_tenders)  # print_lots(list_of_tenders)
 
 
 def parse_tenders_from_page(browser, list_of_tenders, tempForLinkText):
@@ -71,8 +77,10 @@ def parse_tenders_from_page(browser, list_of_tenders, tempForLinkText):
         browser.execute_script(script, div)
 
     # getting info from page
-    list_for_lot_numbers = browser.find_elements_by_xpath("//div[@class='row']/div[@class='col-lg-6 strip_list_center']/ul/li[@class='strip_list_ow']/a")
-    list_for_started_at = browser.find_elements_by_xpath("//div[@class='row']/div[@class='col-lg-6 strip_list_center']/ul/li[contains(text(), 'Дата подачи') and @class='strip_list_ow']")
+    list_for_lot_numbers = browser.find_elements_by_xpath(
+        "//div[@class='row']/div[@class='col-lg-6 strip_list_center']/ul/li[@class='strip_list_ow']/a")
+    list_for_started_at = browser.find_elements_by_xpath(
+        "//div[@class='row']/div[@class='col-lg-6 strip_list_center']/ul/li[contains(text(), 'Дата подачи') and @class='strip_list_ow']")
     list_for_ended_at = browser.find_elements_by_xpath("//*[@id='my-soon-counter']")
     list_for_names = browser.find_elements_by_xpath("//div[@class='col-lg-12']/div/p/a")
     list_for_categories = browser.find_elements_by_xpath("//div[@class='col-lg-12']/div/small/a")
@@ -267,7 +275,6 @@ def parse_tender_lot(browser, current_tender, list_of_tenders):
     get_description(browser, current_tender, list_of_tenders)
 
     current_tender.name = crop_name(current_tender.name)
-
 
 # def print_lots(list_of_tenders):
 #     temp_count_for_print = 1
