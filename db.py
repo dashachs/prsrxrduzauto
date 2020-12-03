@@ -11,10 +11,9 @@ def transliterate(name):
 
 
 def clear_bidding_lots_table(bidding_lots_table):
-    for i in range(len(bidding_lots_table)):
-        if "https://xarid.uzautomotors.com" not in bidding_lots_table[i][1]:
+    for i in range(len(bidding_lots_table) - 1, -1, -1):
+        if "xarid.uzautomotors.com" not in str(bidding_lots_table[i][1]):
             del bidding_lots_table[i]
-            i -= 1
 
 
 def get_bidding_lots_table(con, bidding_lots_table):

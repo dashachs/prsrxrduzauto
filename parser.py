@@ -50,7 +50,9 @@ def execute_parser_orders():
     db.get_bidding_lots_table(con, bidding_lots_table)
     # adding to DB
     for lot in list_of_lots:
+        print("searching in table...")
         if not db.in_table(con, lot.number, lot.source_url, bidding_lots_table):
+            print("saving")
             db.save_lot(con, lot)
 
     # find expired lots
@@ -74,19 +76,19 @@ def execute_parser_orders():
     bidding_lots_table.clear()
 
 
-while True:
-    try:
-        execute_parser_orders()
-    except TimeoutException:
-        print("TIMEOUT_EXCEPTION")
-    except WebDriverException:
-        print("WEB_DRIVER_EXCEPTION")
-    except:
-        print("ERROR")
-    finally:
-        # setting repeating time
-        timerTime = 90
-        print("\n~~~~~~~~~~~~~~~~~~~~~\n"
-              "Parser will start again in", timerTime, "seconds"
-              "\n~~~~~~~~~~~~~~~~~~~~~\n")
-        time.sleep(timerTime)
+# while True:
+#     try:
+execute_parser_orders()
+    # except TimeoutException:
+    #     print("TIMEOUT_EXCEPTION")
+    # except WebDriverException:
+    #     print("WEB_DRIVER_EXCEPTION")
+    # # except:
+    # #     print("ERROR")
+    # finally:
+    #     # setting repeating time
+    #     timerTime = 90
+    #     print("\n~~~~~~~~~~~~~~~~~~~~~\n"
+    #           "Parser will start again in", timerTime, "seconds"
+    #           "\n~~~~~~~~~~~~~~~~~~~~~\n")
+    #     time.sleep(timerTime)
