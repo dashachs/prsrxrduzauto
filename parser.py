@@ -71,6 +71,7 @@ def execute_parser_orders():
 
     # clear list of lots
     list_of_lots.clear()
+    bidding_lots_table.clear()
 
 
 while True:

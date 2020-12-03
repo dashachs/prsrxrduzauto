@@ -10,10 +10,18 @@ def transliterate(name):
     return name
 
 
+def clear_bidding_lots_table(bidding_lots_table):
+    for i in range(len(bidding_lots_table)):
+        if "https://xarid.uzautomotors.com" not in bidding_lots_table[i][1]:
+            del bidding_lots_table[i]
+            i -= 1
+
+
 def get_bidding_lots_table(con, bidding_lots_table):
     cur = con.cursor()
     cur.execute("SELECT number, source_url FROM bidding_lots")
     bidding_lots_table = cur.fetchall()
+    clear_bidding_lots_table(bidding_lots_table)
 
 
 def in_table(con, lotNumber, lotLink, rows):
@@ -96,7 +104,8 @@ def add_subject(con, name, lot):
         "INSERT INTO bidding_subjects(id, name, itin, address, phone, bank_account, website, image, created_at, "
         "updated_at, country_id, responsible_person, phone2, email) "
         "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s, %s)",
-        (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2, lot.email))
+        (new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2,
+         lot.email))
     con.commit()
     return new_id
 
@@ -202,13 +211,14 @@ def save_lot_in_bidding_lots_translations(con, lot):
     cur.execute("INSERT INTO bidding_lots_translations(id, lot_id, name, description_short, description_long, "
                 "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
                 "VALUES (%s, %s, %s, %s, null, %s, %s, %s, %s, %s, null)", (
-        new_id, lot_id, lot.name, lot.description_short, lot.purchase_conditions, lot.delivery_conditions,
-        lot.delivery_time, 'rus', lot.delivery_address))
+                    new_id, lot_id, lot.name, lot.description_short, lot.purchase_conditions, lot.delivery_conditions,
+                    lot.delivery_time, 'rus', lot.delivery_address))
     cur.execute("INSERT INTO bidding_lots_translations(id, lot_id, name, description_short, description_long, "
                 "purchase_conditions, delivery_conditions, delivery_time, locale, delivery_address, measure) "
                 "VALUES (%s, %s, %s, %s, null, %s, %s, %s, %s, %s, null)", (
-        new_id + 1, lot_id, lot.name, lot.description_short, lot.purchase_conditions, lot.delivery_conditions,
-        lot.delivery_time, 'uzb', lot.delivery_address))
+                    new_id + 1, lot_id, lot.name, lot.description_short, lot.purchase_conditions,
+                    lot.delivery_conditions,
+                    lot.delivery_time, 'uzb', lot.delivery_address))
 
     print("id: {}; lot_id: {}".format(new_id, lot_id))
     con.commit()
