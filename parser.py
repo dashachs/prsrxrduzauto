@@ -47,7 +47,6 @@ def execute_parser_orders():
 
     db.get_for_everything(con, list_of_lots)
     bidding_lots_table = db.get_bidding_lots_table(con)
-    print("bidding_lots_table (parser) = ", len(bidding_lots_table))
     # adding to DB
     for lot in list_of_lots:
         print("searching in table...")

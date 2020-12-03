@@ -22,9 +22,9 @@ def get_bidding_lots_table(con):
     cur.execute("SELECT number, source_url FROM bidding_lots")
     bidding_lots_table = cur.fetchall()
     print("bidding_lots_table = ", len(bidding_lots_table))
-    bidding_lots_table_1 = clear_bidding_lots_table(bidding_lots_table)
-    print("bidding_lots_table_1 = ", len(bidding_lots_table_1))
-    return bidding_lots_table_1
+    # bidding_lots_table_1 = clear_bidding_lots_table(bidding_lots_table)
+    # print("bidding_lots_table_1 = ", len(bidding_lots_table_1))
+    return bidding_lots_table
 
 
 def in_table(lotNumber, lotLink, rows):
@@ -34,9 +34,7 @@ def in_table(lotNumber, lotLink, rows):
     # rows = cur.fetchall()
     for row in rows:
         if str(lotNumber) == str(row[0]) and str(lotLink) == str(row[1]):
-            # rows.clear()
             return True
-    # rows.clear()
     return False
 
 
