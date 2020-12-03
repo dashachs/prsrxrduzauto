@@ -44,13 +44,12 @@ def execute_parser_orders():
     db.get_for_everything(con, list_of_lots)
     bidding_lots_table = db.get_bidding_lots_table(con)
 
+    # sorting lots
     list_of_lots = natsorted(list_of_lots, key=lambda lot: lot.number)
 
     # adding to DB
     for lot in list_of_lots:
-        print("searching in table...")
         if not db.in_table(lot.number, lot.source_url, bidding_lots_table):
-            print("saving")
             db.save_lot(con, lot)
 
     # find expired lots
@@ -63,7 +62,7 @@ def execute_parser_orders():
 
     # clear list of lots
     list_of_lots.clear()
-    del bidding_lots_table
+    bidding_lots_table.clear()
 
 
 while True:
