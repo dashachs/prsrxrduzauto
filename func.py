@@ -14,11 +14,19 @@ def to_cut_string(text, length=255):
 def crop_name(name):
     text1 = "онкурс на "
     text2 = "онкурс по "
+    text3 = "ендер на"
+    text4 = "ендер по"
     if text1 in name:
         temp_for_name = name.split(text1)
         name = temp_for_name[1]
     elif text2 in name:
         temp_for_name = name.split(text2)
+        name = temp_for_name[1]
+    elif text3 in name:
+        temp_for_name = name.split(text3)
+        name = temp_for_name[1]
+    elif text4 in name:
+        temp_for_name = name.split(text4)
         name = temp_for_name[1]
     name = name.capitalize()
     return name
