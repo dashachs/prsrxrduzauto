@@ -53,9 +53,7 @@ def open_and_parse_page(browser, link, list_of_tenders):
                     "//ul[@class='pagination']/li[last()]/a[@class='page-link']").get_attribute('href')
                 browser.get(link)
             except NoSuchElementException:
-                print("\n===  NoSuchElementException  ===")
-            finally:
-                continue
+                pass
 
     link1 = "https://xarid.uzautomotors.com/public/corp"
     browser.get(link1)
