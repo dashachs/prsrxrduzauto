@@ -33,8 +33,8 @@ def execute_parser_orders():
     # database input
     while True:
         try:
-            con = psycopg2.connect(database="postgres", user="anwar", password="etender.uz",
-                                   host="database-rds.cbs8omqsohea.eu-west-3.rds.amazonaws.com", port="5432")
+            con = psycopg2.connect(database="tenderbox_test", user="denis", password="denis",
+                                   host="84.54.118.76", port="5432")
         except OperationalError:
             print("Failed to connect to the server. connection...")
         else:
@@ -66,15 +66,15 @@ def execute_parser_orders():
 
 
 while True:
-    try:
+    # try:
         execute_parser_orders()
-    except TimeoutException:
-        print("TIMEOUT_EXCEPTION")
-    except WebDriverException:
-        print("WEB_DRIVER_EXCEPTION")
-    except:
-        print("ERROR")
-    finally:
+    # except TimeoutException:
+    #     print("TIMEOUT_EXCEPTION")
+    # except WebDriverException:
+    #     print("WEB_DRIVER_EXCEPTION")
+    # except:
+    #     print("ERROR")
+    # finally:
         # setting repeating time
         timerTime = 90
         print("\n~~~~~~~~~~~~~~~~~~~~~\n"
