@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def transliterate(name):
     # Слоаврь с заменами
     dictionary = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i',
@@ -21,9 +24,7 @@ def get_bidding_lots_table(con):
     cur = con.cursor()
     cur.execute("SELECT number, source_url FROM bidding_lots")
     bidding_lots_table = cur.fetchall()
-    print("bidding_lots_table = ", len(bidding_lots_table))
-    # bidding_lots_table_1 = clear_bidding_lots_table(bidding_lots_table)
-    # print("bidding_lots_table_1 = ", len(bidding_lots_table_1))
+    # print("bidding_lots_table = ", len(bidding_lots_table))
     return bidding_lots_table
 
 
@@ -43,7 +44,8 @@ def find_expired_lots(con):
     cur = con.cursor()
     # setting timezone for current session to avoid mistakes
     cur.execute("SET TIMEZONE=5")
-    cur.execute("UPDATE bidding_lots SET status = 'expired', updated_at = now() WHERE ended_at < now()")
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cur.execute("UPDATE bidding_lots SET status = 'expired', updated_at = %s WHERE ended_at < %s", (current_time, current_time))
     con.commit()
 
 
@@ -56,9 +58,10 @@ def add_category(con, name):
         if row[1] == transliterate(name):
             return row[0]
     category_id = rows[-1][0] + 1
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cur.execute(
         "INSERT INTO bidding_categories(id, parent_id, depth, path, slug, created_at, updated_at) VALUES (%s, %s, %s, "
-        "%s, %s, now(), now())", (category_id, 41, 2, '/41/{}/'.format(rows[-1][0] + 1), transliterate(name)))
+        "%s, %s, %s, %s)", (category_id, 41, 2, '/41/{}/'.format(rows[-1][0] + 1), transliterate(name), current_time, current_time))
     con.commit()
     rows.clear()
     return category_id
@@ -101,12 +104,13 @@ def add_subject(con, name, lot):
     cur.execute("SELECT id FROM bidding_subjects ORDER BY id")
     rows = cur.fetchall()
     new_id = rows[-1][0] + 1
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cur.execute(
         "INSERT INTO bidding_subjects(id, name, itin, address, phone, bank_account, website, image, created_at, "
         "updated_at, country_id, responsible_person, phone2, email) "
-        "VALUES (%s, %s, %s, %s, %s, %s, null, null, now(), now(), %s, null, %s, %s)", (
-        new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, lot.country_id, lot.phone2,
-        lot.email))
+        "VALUES (%s, %s, %s, %s, %s, %s, null, null, %s, %s, %s, null, %s, %s)", (
+        new_id, name, lot.itin, lot.subject_address, lot.phone, lot.bank_account, current_time, current_time,
+        lot.country_id, lot.phone2, lot.email))
     con.commit()
     return new_id
 
@@ -160,18 +164,10 @@ def get_area_id(con, required):
     return -1
 
 
-def get_for_this_lot(con, currentLot):
-    currentLot.category_id = get_category_id(con, currentLot.category)
-    currentLot.source_id = get_source_id(con, currentLot.source_url)
-    currentLot.subject_id = get_subject_id(con, currentLot.subject, currentLot)
-
-
-def get_for_everything(con, listOfLots):  # название временное
-    print("Processing data...")
-    for lot in listOfLots:
-        get_for_this_lot(con, lot)
-    print("Data was processed successfully\n"
-          "Adding to Database...")
+def get_ids_for_this_lot(con, current_lot):
+    current_lot.category_id = get_category_id(con, current_lot.category)
+    current_lot.source_id = get_source_id(con, current_lot.source_url)
+    current_lot.subject_id = get_subject_id(con, current_lot.subject, current_lot)
 
 
 def get_id_from_bidding_lots(con):
@@ -184,16 +180,17 @@ def get_id_from_bidding_lots(con):
 def save_lot_in_bidding_lots(con, lot):
     cur = con.cursor()
     new_id = get_id_from_bidding_lots(con)
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cur.execute("INSERT INTO bidding_lots(id, type, number, category_id, source_url, advance_amount, "
                 "advance_payment_days, "
                 "remains_payment_days, deposit_amount, started_at, ended_at, status, is_visible, is_approved, created_at, "
                 "updated_at, subject_id, winner_id, source_id, country_id, region_id, area_id, price, currency_id, parent_id,"
                 "closed_at, views, transaction_number, transaction_sum, price_lowest, participants, quantity) "
-                "VALUES (%s, %s, %s, %s, %s, null, null, null, null, %s, %s, %s, true, true, now(), now(), %s, null, "
+                "VALUES (%s, %s, %s, %s, %s, null, null, null, null, %s, %s, %s, true, true, %s, %s, %s, null, "
                 "%s, %s, "
                 "%s, %s, null, null, null, null, 0, null, null, null, null, null)", (
                     new_id, lot.type, lot.number, lot.category_id, lot.source_url, lot.started_at, lot.ended_at,
-                    lot.status, lot.subject_id, lot.source_id, lot.country_id, lot.region_id, lot.area_id))
+                    lot.status, current_time, current_time, lot.subject_id, lot.source_id, lot.country_id, lot.region_id, lot.area_id))
     con.commit()
     return new_id
 
