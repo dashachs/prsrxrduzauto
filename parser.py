@@ -41,15 +41,18 @@ def execute_parser_orders():
             print("Database was opened successfully")
             break
 
-    db.get_for_everything(con, list_of_lots)
+    # db.get_for_everything(con, list_of_lots)
     bidding_lots_table = db.get_bidding_lots_table(con)
 
     # sorting lots
     list_of_lots = natsorted(list_of_lots, key=lambda lot: lot.number)
 
+    print("Processing data and adding to Database...")
+
     # adding to DB
     for lot in list_of_lots:
         if not db.in_table(lot.number, lot.source_url, bidding_lots_table):
+            db.get_for_this_lot(con, lot)
             db.save_lot(con, lot)
 
     # find expired lots
