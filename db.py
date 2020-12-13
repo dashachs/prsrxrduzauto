@@ -170,14 +170,6 @@ def get_ids_for_this_lot(con, current_lot):
     current_lot.subject_id = get_subject_id(con, current_lot.subject, current_lot)
 
 
-def get_for_everything(con, listOfLots):  # название временное
-    print("Processing data...")
-    for lot in listOfLots:
-        get_ids_for_this_lot(con, lot)
-    print("Data was processed successfully\n"
-          "Adding to Database...")
-
-
 def get_id_from_bidding_lots(con):
     cur = con.cursor()
     cur.execute("SELECT id FROM bidding_lots ORDER BY id DESC LIMIT 1")
