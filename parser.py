@@ -69,15 +69,15 @@ def execute_parser_orders():
 
 
 while True:
-    # try:
+    try:
         execute_parser_orders()
-    # except TimeoutException:
-    #     print("TIMEOUT_EXCEPTION")
-    # except WebDriverException:
-    #     print("WEB_DRIVER_EXCEPTION")
-    # except:
-    #     print("ERROR")
-    # finally:
+    except TimeoutException:
+        print("TIMEOUT_EXCEPTION")
+    except WebDriverException:
+        print("WEB_DRIVER_EXCEPTION")
+    except:
+        print("ERROR")
+    finally:
         # setting repeating time
         timerTime = 90
         print("\n~~~~~~~~~~~~~~~~~~~~~\n"
