@@ -136,10 +136,10 @@ def get_sublots_from_table(temp_rows, current_tender, list_of_tenders):
     if "№" in temp_rows[0].text[0:2]:
         del temp_rows[0]
     # checking for empty lines and deleting them
-    for i in range(len(temp_rows)):
+    for i in range(len(temp_rows) - 1, -1, -1):
         if len(temp_rows[i].text.replace('\n', '').replace(' ', '')) < 3:
             del temp_rows[i]
-            i -= 1
+            # i -= 1
     # creating sublots
     for row in temp_rows:
         # formatting text and deleting number

@@ -55,8 +55,8 @@ def execute_parser_orders():
             db.get_ids_for_this_lot(con, lot)
             db.save_lot(con, lot)
 
-    # find expired lots
-    db.find_expired_lots(con)
+    # find expired lots and set update time
+    db.find_expired_lots_and_update(con)
 
     print("Database is up-to-date")
 

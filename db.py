@@ -39,13 +39,25 @@ def in_table(lotNumber, lotLink, rows):
     return False
 
 
-def find_expired_lots(con):
+def find_expired_lots_and_update(con):
     # находим просроченные лоты и изменяем их статус
     cur = con.cursor()
     # setting timezone for current session to avoid mistakes
     cur.execute("SET TIMEZONE=5")
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cur.execute("UPDATE bidding_lots SET status = 'expired', updated_at = %s WHERE ended_at < %s", (current_time, current_time))
+    con.commit()
+    update_lots(con)
+
+
+def update_lots(con):
+    # находим еще не просроченные лоты и изменяем их статус
+    cur = con.cursor()
+    # setting timezone for current session to avoid mistakes
+    cur.execute("SET TIMEZONE=5")
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cur.execute("UPDATE bidding_lots SET updated_at = %s WHERE status = %s AND source_id = 4",
+                (current_time, 'relevant'))
     con.commit()
 
 
